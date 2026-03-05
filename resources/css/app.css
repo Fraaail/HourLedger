@@ -248,8 +248,30 @@
     transform: scale(0.97);
 }
 
-/* Safe area for mobile bottom nav */
+/* Safe area for mobile bottom nav (web fallback) */
 .safe-bottom {
     padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+}
+
+/*
+ * Content area padding for native EDGE navigation.
+ * The native TopBar (~56px) and BottomNav (~80px) are rendered outside
+ * the WebView, so web content needs matching padding to avoid overlap.
+ */
+.native-content-area {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Disable long-press context menus and text selection on mobile */
+.mobile-no-select {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* Smooth momentum scrolling for native-like feel */
+.native-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
 }
 

@@ -24,4 +24,18 @@ export default defineConfig({
     esbuild: {
         jsx: 'automatic',
     },
+    build: {
+        // Mobile-optimized build settings
+        target: 'es2020',
+        cssMinify: 'lightningcss',
+        rollupOptions: {
+            output: {
+                // Chunk splitting for faster mobile loads
+                manualChunks: {
+                    vendor: ['react', 'react-dom'],
+                    inertia: ['@inertiajs/react'],
+                },
+            },
+        },
+    },
 });

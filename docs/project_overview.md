@@ -14,10 +14,12 @@
 | Frontend     | React 19, TypeScript, Tailwind CSS 4, shadcn/ui          |
 | Bridge       | Inertia.js v2 (server-driven SPA)                        |
 | Mobile       | NativePHP Mobile (Android packaging)                     |
+| Native UI    | EDGE (NativePHP native component system)                 |
 | Database     | SQLite (local, no remote server)                          |
 | Routing      | Laravel Wayfinder (type-safe route generation)            |
 | Font         | JetBrains Mono (monospace, clean, professional)           |
 | Build Tool   | Vite 7                                                    |
+| Linting      | ESLint 9, eslint-plugin-jsx-a11y, Prettier               |
 
 ---
 
@@ -30,7 +32,18 @@
 ├─────────────────────────────────────────────────────┤
 │                                                     │
 │  ┌───────────────────────────────────────────────┐  │
+│  │           EDGE Native Components              │  │
+│  │  (Rendered outside WebView by native layer)   │  │
+│  │                                               │  │
+│  │  ┌──────────┐          ┌──────────────────┐   │  │
+│  │  │ TopBar   │          │   BottomNav      │   │  │
+│  │  │ (native) │          │   (native)       │   │  │
+│  │  └──────────┘          └──────────────────┘   │  │
+│  └───────────────────────────────────────────────┘  │
+│                                                     │
+│  ┌───────────────────────────────────────────────┐  │
 │  │              React 19 Frontend                │  │
+│  │           (WebView content area)              │  │
 │  │                                               │  │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────────┐  │  │
 │  │  │Dashboard │ │ Calendar │ │Notifications │  │  │
@@ -39,8 +52,9 @@
 │  │                                               │  │
 │  │  ┌──────────────────────────────────────────┐ │  │
 │  │  │         Shared Components                │ │  │
-│  │  │  BottomNav, MetricCard, CalendarGrid,    │ │  │
-│  │  │  TimeEntryModal, NotificationCard        │ │  │
+│  │  │  MetricCard, CalendarGrid, DayCell,      │ │  │
+│  │  │  TimeEntryModal, NotificationCard,       │ │  │
+│  │  │  ClockButton, StatusBadge                │ │  │
 │  │  └──────────────────────────────────────────┘ │  │
 │  │                                               │  │
 │  │  ┌──────────────────────────────────────────┐ │  │
@@ -50,6 +64,12 @@
 │                                                     │
 │  ┌───────────────────────────────────────────────┐  │
 │  │            Laravel 12 Backend                 │  │
+│  │                                               │  │
+│  │  ┌──────────────────────────────────────────┐ │  │
+│  │  │           Middleware                     │ │  │
+│  │  │  SetEdgeComponents (adds native UI)      │ │  │
+│  │  │  RenderEdgeComponents (sends to native)  │ │  │
+│  │  └──────────────────────────────────────────┘ │  │
 │  │                                               │  │
 │  │  ┌──────────────────────────────────────────┐ │  │
 │  │  │           Controllers                    │ │  │
@@ -71,6 +91,55 @@
 │  └───────────────────────────────────────────────┘  │
 │                                                     │
 └─────────────────────────────────────────────────────┘
+```
+
+---
+
+## EDGE Component System
+
+EDGE is NativePHP for Mobile's native component system. It renders UI elements
+**outside** the WebView as actual native Android/iOS components, providing
+better performance and a truly native look.
+
+### How It Works
+
+1. The `SetEdgeComponents` middleware programmatically registers native UI
+   components (BottomNav, TopBar) on every HTTP request using `Edge::add()`.
+2. NativePHP's built-in `RenderEdgeComponents` middleware (auto-registered by
+   `NativeServiceProvider`) calls `Edge::set()` after the response, which sends
+   the component tree to the native layer via `nativephp_call('Edge.Set', ...)`.
+3. The native shell renders these components outside the WebView, overlaying or
+   adjacent to the web content area.
+
+### Available EDGE Components
+
+| Component          | Blade Tag                    | Description                      |
+| ------------------ | ---------------------------- | -------------------------------- |
+| BottomNav          | `<native:bottom-nav>`        | Bottom tab bar (container)       |
+| BottomNavItem      | `<native:bottom-nav-item>`   | Individual tab in bottom nav     |
+| TopBar             | `<native:top-bar>`           | Top app bar with title           |
+| TopBarAction       | `<native:top-bar-action>`    | Action button in top bar         |
+| Fab                | `<native:fab>`               | Floating action button           |
+| SideNav            | `<native:side-nav>`          | Side navigation drawer           |
+| SideNavHeader      | `<native:side-nav-header>`   | Header in side nav               |
+| SideNavGroup       | `<native:side-nav-group>`    | Grouped items in side nav        |
+| SideNavItem        | `<native:side-nav-item>`     | Individual item in side nav      |
+| HorizontalDivider  | `<native:horizontal-divider>`| Divider line                     |
+
+### Usage in HourLedger
+
+HourLedger uses **programmatic EDGE registration** (not Blade tags) because the
+app uses Inertia.js with React. Blade views are only rendered on the initial page
+load; subsequent navigations are XHR-based. The middleware approach ensures native
+components are updated on every request.
+
+```php
+// app/Http/Middleware/SetEdgeComponents.php
+$contextIndex = Edge::startContext();
+Edge::add('bottom_nav_item', ['id' => 'dashboard', 'icon' => 'dashboard', ...]);
+Edge::add('bottom_nav_item', ['id' => 'calendar', 'icon' => 'calendar_month', ...]);
+Edge::add('bottom_nav_item', ['id' => 'notifications', 'icon' => 'notifications', ...]);
+Edge::endContext($contextIndex, 'bottom_nav', ['label_visibility' => 'labeled', ...]);
 ```
 
 ---
@@ -229,13 +298,40 @@ Scrollable list of notifications:
 
 ## Navigation
 
-Bottom tab navigation (fixed, mobile-optimized):
+Navigation is handled by **native EDGE components** rendered outside the WebView
+for a truly native look and feel. The `SetEdgeComponents` middleware
+programmatically registers these on every request.
 
-| Tab           | Icon         | Route           |
-| ------------- | ------------ | --------------- |
-| Dashboard     | LayoutGrid   | `/`             |
-| Calendar      | CalendarDays | `/calendar`     |
-| Notifications | Bell         | `/notifications`|
+### Native BottomNav (EDGE)
+
+| Tab           | Icon (Material) | Route           | Badge            |
+| ------------- | ---------------- | --------------- | ---------------- |
+| Dashboard     | `dashboard`      | `/`             | —                |
+| Calendar      | `calendar_month` | `/calendar`     | —                |
+| Alerts        | `notifications`  | `/notifications`| Unread count     |
+
+### Native TopBar (EDGE)
+
+Contextual title bar rendered natively. Title resolves based on current route:
+- `/` → "HourLedger"
+- `/calendar` → "Calendar"
+- `/notifications` → "Notifications"
+
+### EDGE Middleware Flow
+
+```
+Request → SetEdgeComponents middleware
+  ├─ Edge::startContext() → bottom_nav context
+  ├─ Edge::add(bottom_nav_item, {...}) × 3 tabs
+  ├─ Edge::endContext() → closes bottom_nav
+  ├─ Edge::add(top_bar, {...})
+  └─ passes to next middleware
+        ↓
+  Controller handles request
+        ↓
+  RenderEdgeComponents middleware (auto-registered by NativePHP)
+  └─ Edge::set() → sends component tree to native layer via nativephp_call()
+```
 
 ---
 
@@ -326,6 +422,9 @@ Every interactive element includes motion feedback:
 
 ```
 app/
+  Http/
+    Middleware/
+      SetEdgeComponents.php       <-- EDGE native UI middleware
   Models/
     TimeEntry.php
     EntryNotification.php
@@ -335,42 +434,45 @@ app/
       TimeEntryController.php
       NotificationController.php
 
+bootstrap/
+  app.php                         <-- registers SetEdgeComponents middleware
+
 database/
   migrations/
     xxxx_xx_xx_create_time_entries_table.php
     xxxx_xx_xx_create_notifications_table.php
 
 resources/
+  css/
+    app.css                       <-- native-content-area, mobile utilities
   js/
     components/
       hourledger/
-        bottom-nav.tsx
         metric-card.tsx
         calendar-grid.tsx
         day-cell.tsx
         time-entry-modal.tsx
         notification-card.tsx
         clock-button.tsx
-        page-transition.tsx
         status-badge.tsx
     layouts/
-      mobile-layout.tsx
+      mobile-layout.tsx           <-- EDGE-aware (no web bottom nav)
     pages/
-      dashboard.tsx          (replace existing)
+      dashboard.tsx
       calendar.tsx
       notifications.tsx
     hooks/
       use-time-format.ts
-    lib/
-      animations.ts
     types/
       hourledger.ts
+  views/
+    app.blade.php                 <-- mobile-optimized viewport
 
 routes/
-  web.php                   (updated)
+  web.php
 
 docs/
-  project_overview.md       (this file)
+  project_overview.md
   checklist.md
 ```
 
@@ -388,9 +490,14 @@ docs/
 
 ## Performance Considerations
 
+- **EDGE native nav** eliminates WebView rendering for BottomNav and TopBar
 - SQLite queries are fast for single-user local data
 - Inertia.js partial reloads minimize data transfer
 - React 19 compiler optimizes re-renders automatically
 - Tailwind CSS purges unused styles in production
 - NativePHP bundles everything into the APK
 - Calendar renders only visible month (lazy loading for months)
+- Vite chunk splitting separates vendor/framework code for faster initial loads
+- Mobile viewport locked (`user-scalable=no`, `viewport-fit=cover`)
+- CSS utility classes for native-like scroll behavior (`overscroll-behavior-y: contain`)
+- JSX accessibility linting via `eslint-plugin-jsx-a11y`

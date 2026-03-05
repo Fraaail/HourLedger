@@ -1,5 +1,32 @@
 # HourLedger - Implementation Checklist
 
+## Phase 0: EDGE Native UI Setup
+
+### EDGE Middleware
+
+- [x] Create `SetEdgeComponents` middleware with native BottomNav and TopBar
+- [x] Register `SetEdgeComponents` in `bootstrap/app.php` web middleware
+- [x] Verify `RenderEdgeComponents` is auto-registered by NativePHP
+- [x] Configure BottomNav with 3 tabs: Dashboard, Calendar, Alerts
+- [x] Configure TopBar with contextual page titles
+- [x] Add notification badge count on Alerts tab
+- [x] Set active state on BottomNav based on current URL
+
+### Mobile Viewport & Layout
+
+- [x] Update `app.blade.php` viewport meta: `viewport-fit=cover`, `user-scalable=no`
+- [x] Add `native-content-area` CSS class for EDGE-aware padding
+- [x] Add `mobile-no-select` and `native-scroll` utility classes
+- [x] Update `mobile-layout.tsx` to remove web-based bottom nav (EDGE handles it)
+
+### Tooling
+
+- [x] Install and configure `eslint-plugin-jsx-a11y` for mobile accessibility
+- [x] Add mobile-relevant a11y rules to ESLint config
+- [x] Configure Vite build for mobile (chunk splitting, ES2020 target)
+
+---
+
 ## Phase 1: Foundation
 
 ### Database
@@ -53,15 +80,12 @@
 
 ### Mobile Layout
 
-- [ ] Create `mobile-layout.tsx` - full-screen mobile shell with bottom nav
-- [ ] Create `bottom-nav.tsx` - fixed bottom tab bar (Dashboard, Calendar, Notifications)
-- [ ] Add active tab indicator with animation
-- [ ] Add safe area padding for mobile devices
+- [x] Create `mobile-layout.tsx` - EDGE-aware layout shell (no web bottom nav)
+- [ ] Add safe area padding for native EDGE components
 - [ ] Ensure all touch targets are minimum 44x44px
 
 ### Shared Components
 
-- [ ] Create `page-transition.tsx` - animated page wrapper with fade/slide
 - [ ] Create `metric-card.tsx` - animated stat card with label and value
 - [ ] Create `status-badge.tsx` - color-coded status indicator
 - [ ] Create `clock-button.tsx` - large clock-in/out toggle button with animation
@@ -145,6 +169,8 @@
 - [ ] Ensure smooth 60fps animations on mobile
 - [ ] Lazy load calendar data by month
 - [ ] Minimize bundle size for mobile
+- [ ] Verify EDGE native nav renders correctly on device
+- [ ] Confirm Vite chunk splitting works in production build
 
 ---
 
@@ -159,5 +185,9 @@
 - [ ] Test calendar month navigation
 - [ ] Test dark mode consistency
 - [ ] Test on mobile viewport (360px - 428px width)
+- [ ] Test EDGE BottomNav tab switching on device
+- [ ] Test EDGE TopBar title changes across routes
+- [ ] Test EDGE notification badge updates after mark-read
+- [ ] Run `npm run lint` to verify no accessibility violations
 - [ ] Run `npm run build` to verify production build
 - [ ] Run `php artisan native:run android` to verify NativePHP packaging

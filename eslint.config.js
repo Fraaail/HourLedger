@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier/flat';
 import importPlugin from 'eslint-plugin-import';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
@@ -28,6 +29,25 @@ export default [
             react: {
                 version: 'detect',
             },
+        },
+    },
+    // Mobile accessibility — enforce touch-friendly, accessible UI
+    {
+        ...jsxA11y.flatConfigs.recommended,
+        rules: {
+            ...jsxA11y.flatConfigs.recommended.rules,
+            // Require click handlers on interactive elements to also have keyboard handlers
+            'jsx-a11y/click-events-have-key-events': 'warn',
+            // Ensure interactive elements are focusable
+            'jsx-a11y/interactive-supports-focus': 'warn',
+            // Require alt text for images
+            'jsx-a11y/alt-text': 'error',
+            // Ensure labels are associated with controls (important for mobile screen readers)
+            'jsx-a11y/label-has-associated-control': 'warn',
+            // Anchors must have content
+            'jsx-a11y/anchor-has-content': 'error',
+            // No autofocus (disorienting on mobile)
+            'jsx-a11y/no-autofocus': 'warn',
         },
     },
     {
