@@ -12,7 +12,16 @@ type DayCellProps = {
     onSelect: (date: string) => void;
 };
 
-export function DayCell({ day, date, entry, isToday, isWeekend, isFuture, isCurrentMonth, onSelect }: DayCellProps) {
+export function DayCell({
+    day,
+    date,
+    entry,
+    isToday,
+    isWeekend,
+    isFuture,
+    isCurrentMonth,
+    onSelect,
+}: DayCellProps) {
     const getStatusClass = () => {
         if (!isCurrentMonth) return 'text-muted-foreground/30';
         if (isFuture) return 'text-muted-foreground/50';
@@ -43,12 +52,15 @@ export function DayCell({ day, date, entry, isToday, isWeekend, isFuture, isCurr
             className={cn(
                 'tap-effect relative flex h-11 w-full flex-col items-center justify-center rounded-lg border border-transparent text-sm transition-all duration-200',
                 getStatusClass(),
-                isToday && 'ring-2 ring-foreground/20 ring-offset-1 ring-offset-background',
+                isToday &&
+                    'ring-2 ring-foreground/20 ring-offset-1 ring-offset-background',
                 canSelect && 'hover:bg-accent active:scale-95',
                 !canSelect && 'cursor-default',
             )}
         >
-            <span className={cn('text-xs font-medium', isToday && 'font-bold')}>{day}</span>
+            <span className={cn('text-xs font-medium', isToday && 'font-bold')}>
+                {day}
+            </span>
             {entry && isCurrentMonth && !isFuture && (
                 <span
                     className={cn(

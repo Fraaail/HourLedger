@@ -14,7 +14,12 @@ type TimeEntryModalProps = {
     entry?: TimeEntryData | null;
 };
 
-export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalProps) {
+export function TimeEntryModal({
+    isOpen,
+    onClose,
+    date,
+    entry,
+}: TimeEntryModalProps) {
     const { formatDate } = useTimeFormat();
     const backdropRef = useRef<HTMLDivElement>(null);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -22,8 +27,12 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
     // Form for creating/updating
     const form = useForm({
         date: date,
-        time_in: entry?.time_in ? new Date(entry.time_in).toTimeString().slice(0, 5) : '',
-        time_out: entry?.time_out ? new Date(entry.time_out).toTimeString().slice(0, 5) : '',
+        time_in: entry?.time_in
+            ? new Date(entry.time_in).toTimeString().slice(0, 5)
+            : '',
+        time_out: entry?.time_out
+            ? new Date(entry.time_out).toTimeString().slice(0, 5)
+            : '',
         notes: entry?.notes ?? '',
     });
 
@@ -36,8 +45,12 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
             // Reset form when opening with new data
             form.setData({
                 date: date,
-                time_in: entry?.time_in ? new Date(entry.time_in).toTimeString().slice(0, 5) : '',
-                time_out: entry?.time_out ? new Date(entry.time_out).toTimeString().slice(0, 5) : '',
+                time_in: entry?.time_in
+                    ? new Date(entry.time_in).toTimeString().slice(0, 5)
+                    : '',
+                time_out: entry?.time_out
+                    ? new Date(entry.time_out).toTimeString().slice(0, 5)
+                    : '',
                 notes: entry?.notes ?? '',
             });
         }
@@ -52,8 +65,12 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
         e.preventDefault();
 
         const dateStr = date;
-        const timeInDate = form.data.time_in ? `${dateStr}T${form.data.time_in}:00` : '';
-        const timeOutDate = form.data.time_out ? `${dateStr}T${form.data.time_out}:00` : '';
+        const timeInDate = form.data.time_in
+            ? `${dateStr}T${form.data.time_in}:00`
+            : '';
+        const timeOutDate = form.data.time_out
+            ? `${dateStr}T${form.data.time_out}:00`
+            : '';
 
         if (entry?.id) {
             form.transform(() => ({
@@ -103,7 +120,7 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
         >
             <div
                 className={cn(
-                    'w-full max-w-lg rounded-t-2xl border-t border-border bg-card px-5 pb-8 pt-4 transition-transform duration-300 ease-out',
+                    'w-full max-w-lg rounded-t-2xl border-t border-border bg-card px-5 pt-4 pb-8 transition-transform duration-300 ease-out',
                     isAnimating ? 'translate-y-0' : 'translate-y-full',
                 )}
             >
@@ -115,8 +132,15 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
                 {/* Header */}
                 <div className="mb-5 flex items-start justify-between">
                     <div>
-                        <h3 className="text-base font-semibold">{formatDate(date)}</h3>
-                        {entry && <StatusBadge status={entry.status} className="mt-1" />}
+                        <h3 className="text-base font-semibold">
+                            {formatDate(date)}
+                        </h3>
+                        {entry && (
+                            <StatusBadge
+                                status={entry.status}
+                                className="mt-1"
+                            />
+                        )}
                     </div>
                     <button
                         onClick={handleClose}
@@ -136,12 +160,16 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
                             <input
                                 type="time"
                                 value={form.data.time_in}
-                                onChange={(e) => form.setData('time_in', e.target.value)}
-                                className="h-12 w-full rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+                                onChange={(e) =>
+                                    form.setData('time_in', e.target.value)
+                                }
+                                className="h-12 w-full rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground focus:outline-none"
                                 required
                             />
                             {form.errors.time_in && (
-                                <p className="mt-1 text-xs text-destructive">{form.errors.time_in}</p>
+                                <p className="mt-1 text-xs text-destructive">
+                                    {form.errors.time_in}
+                                </p>
                             )}
                         </div>
                         <div>
@@ -151,11 +179,15 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
                             <input
                                 type="time"
                                 value={form.data.time_out}
-                                onChange={(e) => form.setData('time_out', e.target.value)}
-                                className="h-12 w-full rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+                                onChange={(e) =>
+                                    form.setData('time_out', e.target.value)
+                                }
+                                className="h-12 w-full rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground focus:outline-none"
                             />
                             {form.errors.time_out && (
-                                <p className="mt-1 text-xs text-destructive">{form.errors.time_out}</p>
+                                <p className="mt-1 text-xs text-destructive">
+                                    {form.errors.time_out}
+                                </p>
                             )}
                         </div>
                     </div>
@@ -166,11 +198,13 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
                         </label>
                         <textarea
                             value={form.data.notes}
-                            onChange={(e) => form.setData('notes', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('notes', e.target.value)
+                            }
                             placeholder="What did you work on?"
                             rows={3}
                             maxLength={500}
-                            className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm transition-colors placeholder:text-muted-foreground/50 focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+                            className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm transition-colors placeholder:text-muted-foreground/50 focus:border-foreground focus:ring-1 focus:ring-foreground focus:outline-none"
                         />
                     </div>
 
@@ -180,7 +214,11 @@ export function TimeEntryModal({ isOpen, onClose, date, entry }: TimeEntryModalP
                             disabled={form.processing || !form.data.time_in}
                             className="tap-effect h-12 flex-1 rounded-lg text-sm font-semibold transition-transform active:scale-[0.98]"
                         >
-                            {form.processing ? 'Saving...' : entry?.id ? 'Update Entry' : 'Save Entry'}
+                            {form.processing
+                                ? 'Saving...'
+                                : entry?.id
+                                  ? 'Update Entry'
+                                  : 'Save Entry'}
                         </Button>
 
                         {entry?.id && (

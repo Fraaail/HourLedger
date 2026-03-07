@@ -16,11 +16,28 @@ type CalendarGridProps = {
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const MONTH_NAMES = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
 ];
 
-export function CalendarGrid({ year, month, entries, onSelectDate, onPrevMonth, onNextMonth }: CalendarGridProps) {
+export function CalendarGrid({
+    year,
+    month,
+    entries,
+    onSelectDate,
+    onPrevMonth,
+    onNextMonth,
+}: CalendarGridProps) {
     const today = new Date();
     const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
@@ -104,7 +121,8 @@ export function CalendarGrid({ year, month, entries, onSelectDate, onPrevMonth, 
         return days;
     }, [year, month, todayString]);
 
-    const isCurrentMonth = today.getFullYear() === year && today.getMonth() + 1 === month;
+    const isCurrentMonth =
+        today.getFullYear() === year && today.getMonth() + 1 === month;
     const canGoNext = !isCurrentMonth;
 
     return (
@@ -125,7 +143,9 @@ export function CalendarGrid({ year, month, entries, onSelectDate, onPrevMonth, 
                     disabled={!canGoNext}
                     className={cn(
                         'tap-effect flex h-10 w-10 items-center justify-center rounded-lg transition-colors active:scale-95',
-                        canGoNext ? 'hover:bg-accent' : 'cursor-not-allowed opacity-30',
+                        canGoNext
+                            ? 'hover:bg-accent'
+                            : 'cursor-not-allowed opacity-30',
                     )}
                 >
                     <ChevronRight className="h-5 w-5" />
@@ -135,7 +155,10 @@ export function CalendarGrid({ year, month, entries, onSelectDate, onPrevMonth, 
             {/* Weekday labels */}
             <div className="mb-1 grid grid-cols-7 gap-1">
                 {WEEKDAY_LABELS.map((label) => (
-                    <div key={label} className="flex h-8 items-center justify-center text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    <div
+                        key={label}
+                        className="flex h-8 items-center justify-center text-[10px] font-semibold tracking-widest text-muted-foreground uppercase"
+                    >
                         {label}
                     </div>
                 ))}

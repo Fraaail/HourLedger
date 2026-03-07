@@ -1,6 +1,6 @@
 # HourLedger
 
-HourLedger is a local, lightweight time-tracking and calendaring application. Built to feel seamless and responsive, it helps you clock in, clock out, review your timeline in a calendar view, and manage past time entries with ease. 
+HourLedger is a local, lightweight time-tracking and calendaring application. Built to feel seamless and responsive, it helps you clock in, clock out, review your timeline in a calendar view, and manage past time entries with ease.
 
 ---
 
@@ -65,9 +65,9 @@ HourLedger bypasses the traditional decoupled API architecture in favor of an in
 
 3. **Inertia Response (The Bridge):**
    Instead of returning a standard HTML view or a raw JSON payload, the controller returns an Inertia response (`Inertia::render`). This packages the queried data as **props** and specifies which React Component should be rendered on the frontend.
-   
+
 4. **React Rendering (Frontend):**
    Vite captures the response and seamlessly mounts the React components. Because Inertia tracks the routing state, subsequent clicks (like clocking in or marking a notification read) use XHR requests to fetch new Inertia payloads. The page never fully reloads, rendering smoothly like a modern SPA while still utilizing server-side routing.
 
-5. **Local First:** 
+5. **Local First:**
    Auth flows are mostly sidestepped natively since HourLedger runs locally. Native PHP (if bundled) manages spinning up the underlying PHP server in the background, interacting natively with your OS.

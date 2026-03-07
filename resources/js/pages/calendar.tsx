@@ -6,14 +6,16 @@ import MobileLayout from '@/layouts/mobile-layout';
 import type { CalendarPageProps, TimeEntryData } from '@/types/hourledger';
 
 export default function Calendar() {
-    const { entries, year, month, unread_notification_count } =
-        usePage<{ props: CalendarPageProps }>().props as unknown as CalendarPageProps;
+    const { entries, year, month, unread_notification_count } = usePage<{
+        props: CalendarPageProps;
+    }>().props as unknown as CalendarPageProps;
 
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const selectedEntry: TimeEntryData | null =
-        selectedDate ? entries.find((e) => e.date === selectedDate) ?? null : null;
+    const selectedEntry: TimeEntryData | null = selectedDate
+        ? (entries.find((e) => e.date === selectedDate) ?? null)
+        : null;
 
     const handleSelectDate = useCallback((date: string) => {
         setSelectedDate(date);
@@ -42,11 +44,16 @@ export default function Calendar() {
     }, [year, month]);
 
     return (
-        <MobileLayout title="Calendar" unreadNotificationCount={unread_notification_count}>
+        <MobileLayout
+            title="Calendar"
+            unreadNotificationCount={unread_notification_count}
+        >
             <div className="px-5 pt-6 pb-4">
                 {/* Header */}
                 <div className="animate-fade-in-up mb-5">
-                    <h1 className="text-xl font-bold tracking-tight">Calendar</h1>
+                    <h1 className="text-xl font-bold tracking-tight">
+                        Calendar
+                    </h1>
                     <p className="mt-0.5 text-xs text-muted-foreground">
                         Tap a day to view or add entries
                     </p>

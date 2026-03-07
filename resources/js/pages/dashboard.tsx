@@ -9,9 +9,11 @@ import { cn } from '@/lib/utils';
 import type { DashboardPageProps } from '@/types/hourledger';
 
 export default function Dashboard() {
-    const { today, metrics, unread_notification_count } =
-        usePage<{ props: DashboardPageProps }>().props as unknown as DashboardPageProps;
-    const { formatHours, getCurrentGreeting, formatTodayDate } = useTimeFormat();
+    const { today, metrics, unread_notification_count } = usePage<{
+        props: DashboardPageProps;
+    }>().props as unknown as DashboardPageProps;
+    const { formatHours, getCurrentGreeting, formatTodayDate } =
+        useTimeFormat();
 
     const todayStatus: 'none' | 'clocked_in' | 'clocked_out' = today
         ? today.time_out
@@ -20,14 +22,19 @@ export default function Dashboard() {
         : 'none';
 
     return (
-        <MobileLayout title="Dashboard" unreadNotificationCount={unread_notification_count}>
+        <MobileLayout
+            title="Dashboard"
+            unreadNotificationCount={unread_notification_count}
+        >
             <div className="px-5 pt-6 pb-4">
                 {/* Header */}
                 <div className="animate-fade-in-up mb-6">
-                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                         {formatTodayDate()}
                     </p>
-                    <h1 className="mt-1 text-xl font-bold tracking-tight">{getCurrentGreeting()}</h1>
+                    <h1 className="mt-1 text-xl font-bold tracking-tight">
+                        {getCurrentGreeting()}
+                    </h1>
                 </div>
 
                 {/* Clock In/Out Section */}
@@ -50,22 +57,24 @@ export default function Dashboard() {
                                     <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2.5">
                                         <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                                         <div>
-                                            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                                            <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                                                 In
                                             </p>
                                             <p className="text-sm font-semibold">
-                                                {today.formatted_time_in ?? '--:--'}
+                                                {today.formatted_time_in ??
+                                                    '--:--'}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2.5">
                                         <Timer className="h-3.5 w-3.5 text-muted-foreground" />
                                         <div>
-                                            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                                            <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                                                 Out
                                             </p>
                                             <p className="text-sm font-semibold">
-                                                {today.formatted_time_out ?? '--:--'}
+                                                {today.formatted_time_out ??
+                                                    '--:--'}
                                             </p>
                                         </div>
                                     </div>
@@ -79,13 +88,17 @@ export default function Dashboard() {
                 <div className="mb-2">
                     <h2
                         className={cn(
-                            'animate-fade-in-up stagger-3 mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground',
+                            'animate-fade-in-up stagger-3 mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase',
                         )}
                     >
                         Overview
                     </h2>
                     <div className="grid grid-cols-2 gap-3">
-                        <MetricCard label="Total Hours" value={formatHours(metrics.total_rendered_hours)} index={0} />
+                        <MetricCard
+                            label="Total Hours"
+                            value={formatHours(metrics.total_rendered_hours)}
+                            index={0}
+                        />
                         <MetricCard
                             label="Total Days"
                             value={metrics.total_rendered_days}

@@ -25,8 +25,12 @@ export function ClockButton({ todayStatus }: ClockButtonProps) {
                     <LogOut className="h-8 w-8 text-success" />
                 </div>
                 <div className="text-center">
-                    <p className="text-sm font-semibold text-success">Clocked Out</p>
-                    <p className="text-xs text-muted-foreground">You're done for today</p>
+                    <p className="text-sm font-semibold text-success">
+                        Clocked Out
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                        You're done for today
+                    </p>
                 </div>
             </div>
         );
@@ -42,14 +46,19 @@ export function ClockButton({ todayStatus }: ClockButtonProps) {
                         'tap-effect flex h-20 w-20 items-center justify-center rounded-full border-2 border-destructive/30 bg-destructive/10 transition-all duration-300',
                         'hover:border-destructive/50 hover:bg-destructive/20',
                         'active:scale-95',
-                        clockOutForm.processing && 'animate-pulse-soft opacity-70',
+                        clockOutForm.processing &&
+                            'animate-pulse-soft opacity-70',
                     )}
                 >
                     <LogOut className="h-8 w-8 text-destructive" />
                 </button>
                 <div className="text-center">
-                    <p className="text-sm font-semibold text-foreground">Clock Out</p>
-                    <p className="text-xs text-muted-foreground">Tap to end your shift</p>
+                    <p className="text-sm font-semibold text-foreground">
+                        Clock Out
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                        Tap to end your shift
+                    </p>
                 </div>
             </div>
         );
@@ -70,8 +79,12 @@ export function ClockButton({ todayStatus }: ClockButtonProps) {
                 <LogIn className="h-8 w-8 text-foreground" />
             </button>
             <div className="text-center">
-                <p className="text-sm font-semibold text-foreground">Clock In</p>
-                <p className="text-xs text-muted-foreground">Tap to start your shift</p>
+                <p className="text-sm font-semibold text-foreground">
+                    Clock In
+                </p>
+                <p className="text-xs text-muted-foreground">
+                    Tap to start your shift
+                </p>
             </div>
         </div>
     );

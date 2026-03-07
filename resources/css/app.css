@@ -8,8 +8,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans:
-        'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono',
+    --font-sans: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono',
         Menlo, Consolas, 'Liberation Mono', monospace;
 
     --radius-lg: var(--radius);
@@ -205,7 +204,8 @@
 }
 
 @keyframes pulse-soft {
-    0%, 100% {
+    0%,
+    100% {
         opacity: 1;
     }
     50% {
@@ -234,11 +234,21 @@
 }
 
 /* Stagger delay utilities */
-.stagger-1 { animation-delay: 0ms; }
-.stagger-2 { animation-delay: 80ms; }
-.stagger-3 { animation-delay: 160ms; }
-.stagger-4 { animation-delay: 240ms; }
-.stagger-5 { animation-delay: 320ms; }
+.stagger-1 {
+    animation-delay: 0ms;
+}
+.stagger-2 {
+    animation-delay: 80ms;
+}
+.stagger-3 {
+    animation-delay: 160ms;
+}
+.stagger-4 {
+    animation-delay: 240ms;
+}
+.stagger-5 {
+    animation-delay: 320ms;
+}
 
 /* Touch-optimized tap effect */
 .tap-effect {
@@ -274,4 +284,3 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
 }
-

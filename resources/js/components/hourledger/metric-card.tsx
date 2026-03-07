@@ -8,7 +8,12 @@ type MetricCardProps = {
     index?: number;
 };
 
-export function MetricCard({ label, value, sublabel, index = 0 }: MetricCardProps) {
+export function MetricCard({
+    label,
+    value,
+    sublabel,
+    index = 0,
+}: MetricCardProps) {
     return (
         <div
             className={cn(
@@ -17,9 +22,17 @@ export function MetricCard({ label, value, sublabel, index = 0 }: MetricCardProp
                 stagger(index),
             )}
         >
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
-            <p className="mt-1.5 text-2xl font-bold tracking-tight text-foreground">{value}</p>
-            {sublabel && <p className="mt-0.5 text-xs text-muted-foreground">{sublabel}</p>}
+            <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+                {label}
+            </p>
+            <p className="mt-1.5 text-2xl font-bold tracking-tight text-foreground">
+                {value}
+            </p>
+            {sublabel && (
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                    {sublabel}
+                </p>
+            )}
         </div>
     );
 }
