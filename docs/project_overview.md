@@ -54,5 +54,4 @@ The architecture represents a self-contained web app running inside a native mob
 
 ## Features to be Added in the Future
 
-1. **Automatic Timezone based on Location:** The app automatically sets the correct timezone based on the user's location.
-2. **Built-In Journal Tracker** Allows the user to create journals that is needed for OJT Reports.
+1. **Built-In Journal Tracker** Allows the user to create journals that is needed for OJT Reports.
