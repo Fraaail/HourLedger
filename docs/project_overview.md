@@ -51,3 +51,7 @@ The architecture represents a self-contained web app running inside a native mob
 - `time_out` (DateTime, Nullable)
 - `total_minutes` (Integer, Nullable - computed after time_out)
 - `created_at`, `updated_at` (Timestamps)
+
+## Features to be Added in the Future
+
+1. **Automatic Timezone based on Location:** The app automatically sets the correct timezone based on the user's location.
