@@ -27,8 +27,8 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 npm install
 composer install
 
-# Run migrations
-php artisan migrate:fresh
+# Run setup script (creates .env, generates key, creates DB, runs migrations)
+./setup.sh
 
 # Start the development server
 composer dev

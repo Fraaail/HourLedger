@@ -44,3 +44,6 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Simulate or test responsive dimensions.
 - [x] Validate NativePHP integration (`php artisan native:serve` or `php artisan serve`).
 - [x] Write feature tests for all core functionality (dashboard, time in/out, calendar, settings, timezone).
+- [x] Create a `setup.sh` script to automate `.env`, app key, database creation and migrations.
+- [x] Verify tests pass successfully.
+- [x] Run `pre-commit run --all-files` and fix any issues.

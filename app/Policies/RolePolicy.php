@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Spatie\Permission\Models\Role;
-use Illuminate\Auth\Access\HandlesAuthorization;
 
 class RolePolicy
 {
@@ -66,5 +66,4 @@ class RolePolicy
     {
         return $authUser->can('Reorder:Role');
     }
-
 }
