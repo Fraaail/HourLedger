@@ -24,16 +24,18 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 
 ```bash
 # Install dependencies
+npm install
 composer install
 
 # Run migrations
-php artisan migrate
+php artisan migrate:fresh
 
 # Start the development server
-php artisan serve
+composer dev
 
-# Or run as a native mobile app
-php artisan native:serve
+# Or run as a native mobile app using Jump (Use --skip-build if there is one already)
+composer require nativephp/mobile
+php artisan native:jump
 ```
 
 ## Running Tests
