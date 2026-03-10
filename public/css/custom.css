@@ -1,0 +1,376 @@
+:root {
+    --bg-color: #0d1117;
+    --surface-color: #161b22;
+    --border-color: #30363d;
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b949e;
+    --accent-color: #2f81f7;
+    --accent-hover: #1f6feb;
+    --danger-color: #f85149;
+    --success-color: #238636;
+    --font-mono: 'JetBrains Mono', monospace;
+    /* NativePHP injects --inset-top/right/bottom/left via JS.
+       Provide defaults so the layout works outside the native shell too. */
+    --inset-top: 0px;
+    --inset-right: 0px;
+    --inset-bottom: 0px;
+    --inset-left: 0px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.app-header {
+    padding: calc(1rem + var(--inset-top, 0px)) 1rem 1rem 1rem;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.app-header h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.app-main {
+    flex: 1;
+    padding: 1.5rem 1rem calc(5rem + var(--inset-bottom, 0px)) 1rem;
+}
+
+.metric-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.metric-card:active {
+    transform: scale(0.97);
+}
+
+.metric-card h3 {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.action-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40vh;
+}
+
+.btn-time {
+    width: min(200px, 60vw);
+    height: min(200px, 60vw);
+    border-radius: 50%;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: min(1.5rem, 6vw);
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-time span.helper {
+    font-size: 0.8rem;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.btn-time:active {
+    transform: scale(0.92);
+}
+
+.btn-time.in {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-time.out {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn-time[disabled] {
+    background-color: var(--surface-color);
+    color: var(--text-secondary);
+    box-shadow: none;
+    cursor: not-allowed;
+    border: 2px solid var(--border-color);
+}
+
+.notification {
+    background-color: rgba(248, 81, 73, 0.1);
+    border: 1px solid var(--danger-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.notification-title {
+    color: var(--danger-color);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: min(4px, 1vw);
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+}
+
+.calendar-header {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    padding: 0.25rem 0;
+    font-weight: 600;
+}
+
+.calendar-cell {
+    background-color: var(--surface-color);
+    border-radius: 6px;
+    height: 42px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.85rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.calendar-cell.rendered {
+    border-color: var(--success-color);
+    color: var(--success-color);
+    font-weight: 700;
+}
+
+.calendar-cell.partial {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.calendar-cell.empty {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.calendar-cell:active {
+    background-color: var(--border-color);
+}
+
+.calendar-details {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    display: none;
+}
+
+.calendar-details.visible {
+    display: block;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.details-row:last-child {
+    border-bottom: none;
+}
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(60px + var(--inset-bottom, 0px));
+    background-color: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 10;
+    padding-bottom: var(--inset-bottom, 0px);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+    gap: 4px;
+    transition: color 0.2s;
+    width: 100%;
+    padding: 8px 0;
+}
+
+.nav-item.active,
+.nav-item:active {
+    color: var(--accent-color);
+}
+
+/* Settings Page */
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.settings-description {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.settings-field {
+    margin-bottom: 1rem;
+}
+
+.settings-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.settings-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    appearance: none;
+    cursor: pointer;
+}
+
+.settings-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.settings-error {
+    color: var(--danger-color);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.settings-save {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.settings-save:active {
+    background-color: var(--accent-hover);
+}
+
+.success-notification {
+    background-color: rgba(35, 134, 54, 0.1);
+    border-color: var(--success-color);
+}
+
+.success-notification .notification-title {
+    color: var(--success-color);
+}
