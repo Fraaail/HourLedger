@@ -24,6 +24,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Apply CSS transitions and keyframe animations for interactions (buttons, modals, views).
 - [x] Handle mobile safe-area insets (status bar, navigation bar) via NativePHP-injected `--inset-*` CSS custom properties and iOS `env(safe-area-inset-*)` fallbacks.
 - [x] Optimize for both Android and iOS: `theme-color`, `apple-mobile-web-app-capable`, `touch-action: manipulation`, dynamic viewport height (`dvh`), GPU-accelerated transforms, 48px minimum touch targets, and `font-size: 16px` on inputs to prevent iOS auto-zoom.
+- [x] Rename `/time-out` route to `/clock-out` to avoid reserved routing conflict on iOS NativePHP/Jump that triggers 404.
 
 ## Phase 4: Application Features
 - [x] **Dashboard (Home View):**

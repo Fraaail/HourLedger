@@ -11,7 +11,7 @@ test('dashboard loads correctly', function () {
 
 test('user can log time in', function () {
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
-        ->post('/time-in');
+        ->post('/clock-in');
 
     $response->assertStatus(302);
     $this->assertDatabaseHas('time_entries', [
@@ -29,7 +29,7 @@ test('user can log time out', function () {
     ]);
 
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
-        ->post('/time-out');
+        ->post('/clock-out');
     $response->assertStatus(302);
 
     $entry = TimeEntry::where('date', $today)->first();

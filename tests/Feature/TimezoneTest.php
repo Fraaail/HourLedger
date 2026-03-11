@@ -9,7 +9,7 @@ test('time in uses configured timezone for date', function () {
     Setting::set('timezone', 'Asia/Manila');
 
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
-        ->post('/time-in');
+        ->post('/clock-in');
 
     $response->assertStatus(302);
 
@@ -31,7 +31,7 @@ test('time out uses configured timezone', function () {
     ]);
 
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
-        ->post('/time-out');
+        ->post('/clock-out');
 
     $response->assertStatus(302);
 
@@ -78,7 +78,7 @@ test('dashboard works without timezone setting', function () {
 
 test('time in works without timezone setting', function () {
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
-        ->post('/time-in');
+        ->post('/clock-in');
 
     $response->assertStatus(302);
     $this->assertDatabaseHas('time_entries', [
@@ -92,7 +92,7 @@ test('time in stores timestamps in utc not local timezone', function () {
     Carbon::setTestNow(Carbon::create(2026, 3, 10, 1, 0, 0, 'UTC'));
 
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
-        ->post('/time-in');
+        ->post('/clock-in');
 
     $response->assertStatus(302);
 
@@ -114,7 +114,7 @@ test('duration is correct across timezone offsets', function () {
     ]);
 
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
-        ->post('/time-out');
+        ->post('/clock-out');
 
     $entry = TimeEntry::where('date', $today)->first();
     expect($entry->total_minutes)->toBeGreaterThanOrEqual(479);
