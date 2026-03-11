@@ -7,16 +7,17 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 - **Time In / Time Out** — One-tap clock in and clock out with automatic duration calculation.
 - **Dashboard** — View total rendered hours and days at a glance.
 - **Calendar View** — Monthly grid showing logged days with tap-to-reveal details.
+- **Journal Entries** — Write daily journals for activities, integrated directly in the calendar view with missing entry indicators.
 - **Missing Entry Alerts** — Notifications for weekdays without a completed time entry.
 - **Timezone Selection** — Manually select your timezone (e.g. Asia/Manila) from settings. All times are stored in UTC and converted to your chosen timezone for display.
-- **Mobile-Optimized** — Dark-themed, JetBrains Mono typography, safe-area-aware layout that respects the device status bar and navigation bar.
+- **Mobile-Optimized** — Dark-themed, JetBrains Mono typography, safe-area-aware layout optimized for both Android and iOS devices.
 
 ## Tech Stack
 
 - **Framework:** Laravel 12 (PHP)
 - **Frontend:** Blade templates + vanilla CSS/JS
 - **Database:** SQLite (local)
-- **Mobile Shell:** NativePHP (Android)
+- **Mobile Shell:** NativePHP (Android / iOS)
 - **Font:** JetBrains Mono
 - **Testing:** Pest PHP
 
@@ -28,7 +29,7 @@ npm install
 composer install
 
 # Run setup script (creates .env, generates key, creates DB, runs migrations)
-./setup.sh
+php scripts/setup.php
 
 # Start the development server
 composer dev
@@ -46,7 +47,24 @@ php artisan test
 
 ## Mobile Layout
 
-The app uses `viewport-fit=cover` to render edge-to-edge on mobile devices. NativePHP injects safe-area inset values as CSS custom properties (`--inset-top`, `--inset-right`, `--inset-bottom`, `--inset-left`) at runtime, ensuring the app header and bottom navigation never overlap with the device’s status bar or navigation bar.
+The app uses `viewport-fit=cover` to render edge-to-edge on mobile devices.
+
+### Android
+- Chrome address bar is themed via `theme-color` meta tag.
+- NativePHP injects safe-area inset values as CSS custom properties (`--inset-top`, `--inset-right`, `--inset-bottom`, `--inset-left`) at runtime.
+
+### iOS
+- Full-screen web-app mode via `apple-mobile-web-app-capable` meta tags.
+- Native `env(safe-area-inset-*)` CSS functions handle notch and home-indicator.
+- Form inputs use `font-size: 16px` to prevent Safari auto-zoom.
+- Momentum scrolling enabled via `-webkit-overflow-scrolling: touch`.
+
+### Both Platforms
+- Dynamic viewport height (`100dvh`) avoids toolbar overlap.
+- `overscroll-behavior` prevents rubber-band bouncing.
+- `touch-action: manipulation` eliminates the 300ms tap delay.
+- GPU-accelerated transforms on fixed elements for smooth 60fps scrolling.
+- Minimum 48x48px touch targets per WCAG accessibility guidelines.
 
 Default fallback values (`0px`) are declared in `:root` so the layout works correctly in a standard browser as well.
 

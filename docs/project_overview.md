@@ -14,7 +14,7 @@ HourLedger is a NativePHP mobile application designed specifically as an offline
 
 The architecture represents a self-contained web app running inside a native mobile wrapper using NativePHP.
 
-1. **Native Shell (NativePHP):** Serves the application to the user via an embedded server and webview, packaging the app for mobile operating systems (Android/iOS).
+1. **Native Shell (NativePHP):** Serves the application to the user via an embedded server and webview, packaging the app for mobile operating systems (Android/iOS). Includes platform-specific optimizations (safe-area insets, theme-color, apple-mobile-web-app meta tags, touch-action, GPU-accelerated transforms).
 2. **Backend Framework (Laravel PHP):**
    - Handles the business logic: calculating hours, storing in/out times, identifying missing entries.
    - Provides API endpoints or controller actions for the frontend.
@@ -52,6 +52,8 @@ The architecture represents a self-contained web app running inside a native mob
 - `total_minutes` (Integer, Nullable - computed after time_out)
 - `created_at`, `updated_at` (Timestamps)
 
-## Features to be Added in the Future
-
-1. **Built-In Journal Tracker** Allows the user to create journals that is needed for OJT Reports.
+**`journals` Table**
+- `id` (Primary Key)
+- `date` (Date, Unique)
+- `content` (Text, Nullable)
+- `created_at`, `updated_at` (Timestamps)

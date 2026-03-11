@@ -43,12 +43,15 @@ test('css declares default inset custom properties in root', function () {
     expect($css)->toContain('--inset-bottom: 0px');
     expect($css)->toContain('--inset-left: 0px');
     expect($css)->toContain('--inset-right: 0px');
+    // iOS safe-area env() fallbacks must also be declared.
+    expect($css)->toContain('env(safe-area-inset-top');
+    expect($css)->toContain('env(safe-area-inset-bottom');
 });
 
 test('css header uses inset-top custom property for padding', function () {
     $cssPath = public_path('css/custom.css');
     $css = file_get_contents($cssPath);
-    expect($css)->toContain('var(--inset-top');
+    expect($css)->toContain('var(--safe-top');
 });
 
 test('css header is sticky with z-index', function () {
@@ -61,12 +64,45 @@ test('css header is sticky with z-index', function () {
 test('css bottom nav uses inset-bottom custom property', function () {
     $cssPath = public_path('css/custom.css');
     $css = file_get_contents($cssPath);
-    expect($css)->toContain('calc(60px + var(--inset-bottom');
-    expect($css)->toContain('padding-bottom: var(--inset-bottom');
+    expect($css)->toContain('calc(60px + var(--safe-bottom');
+    expect($css)->toContain('padding-bottom: var(--safe-bottom');
 });
 
 test('css main content has padding bottom for bottom nav and safe area', function () {
     $cssPath = public_path('css/custom.css');
     $css = file_get_contents($cssPath);
-    expect($css)->toContain('calc(5rem + var(--inset-bottom');
+    expect($css)->toContain('calc(5rem + var(--safe-bottom');
+});
+
+test('layout includes apple mobile web app meta tags', function () {
+    $response = $this->get('/');
+    $response->assertStatus(200);
+    $response->assertSee('apple-mobile-web-app-capable', false);
+    $response->assertSee('apple-mobile-web-app-status-bar-style', false);
+});
+
+test('layout includes android theme-color meta tag', function () {
+    $response = $this->get('/');
+    $response->assertStatus(200);
+    $response->assertSee('theme-color', false);
+    $response->assertSee('#0d1117', false);
+});
+
+test('css prevents ios auto-zoom on form inputs', function () {
+    $cssPath = public_path('css/custom.css');
+    $css = file_get_contents($cssPath);
+    // Inputs with font-size < 16px cause iOS auto-zoom
+    expect($css)->toContain('font-size: 16px');
+});
+
+test('css uses touch-action manipulation for tap delay removal', function () {
+    $cssPath = public_path('css/custom.css');
+    $css = file_get_contents($cssPath);
+    expect($css)->toContain('touch-action: manipulation');
+});
+
+test('css uses dynamic viewport height for mobile', function () {
+    $cssPath = public_path('css/custom.css');
+    $css = file_get_contents($cssPath);
+    expect($css)->toContain('100dvh');
 });

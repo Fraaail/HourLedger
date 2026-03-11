@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Journal;
 use App\Models\Setting;
 use App\Models\TimeEntry;
 use Carbon\Carbon;
@@ -61,8 +62,9 @@ class TimeEntryController extends Controller
     {
         $tz = $this->getTimezone();
         $entries = TimeEntry::all()->keyBy('date');
+        $journals = Journal::all()->keyBy('date');
 
-        return view('calendar', compact('entries', 'tz'));
+        return view('calendar', compact('entries', 'journals', 'tz'));
     }
 
     private function getMissingEntries()

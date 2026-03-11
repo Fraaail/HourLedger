@@ -10,11 +10,20 @@
     --success-color: #238636;
     --font-mono: 'JetBrains Mono', monospace;
     /* NativePHP injects --inset-top/right/bottom/left via JS.
-       Provide defaults so the layout works outside the native shell too. */
+       Provide defaults so the layout works outside the native shell too.
+       iOS env() safe-area-inset values are used as fallbacks. */
     --inset-top: 0px;
     --inset-right: 0px;
     --inset-bottom: 0px;
     --inset-left: 0px;
+    /* Use max() to combine NativePHP-injected insets (Android) with
+       iOS env() safe-area values. On Android, env() returns 0px so
+       NativePHP's --inset-* wins. On iOS, env() returns the real
+       inset so it wins. Both sources are respected. */
+    --safe-top: max(env(safe-area-inset-top, 0px), var(--inset-top));
+    --safe-right: max(env(safe-area-inset-right, 0px), var(--inset-right));
+    --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--inset-bottom));
+    --safe-left: max(env(safe-area-inset-left, 0px), var(--inset-left));
 }
 
 * {
@@ -23,22 +32,35 @@
     padding: 0;
 }
 
+html {
+    /* Prevent iOS rubber-band overscroll */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
     font-family: var(--font-mono);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    overscroll-behavior-y: contain;
     user-select: none;
+    -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
+    /* Eliminate 300ms tap delay on older devices */
+    touch-action: manipulation;
 }
 
 #app {
     display: flex;
     flex-direction: column;
+    /* Use dvh for accurate mobile viewport height (avoids toolbar overlap) */
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .fade-in {
@@ -51,13 +73,16 @@ body {
 }
 
 .app-header {
-    padding: calc(1rem + var(--inset-top, 0px)) 1rem 1rem 1rem;
+    padding: calc(1rem + var(--safe-top, var(--inset-top, 0px))) 1rem 1rem 1rem;
     background-color: var(--surface-color);
     border-bottom: 1px solid var(--border-color);
     text-align: center;
     position: sticky;
     top: 0;
     z-index: 10;
+    /* GPU layer promotion for smoother scrolling */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 .app-header h1 {
@@ -68,7 +93,9 @@ body {
 
 .app-main {
     flex: 1;
-    padding: 1.5rem 1rem calc(5rem + var(--inset-bottom, 0px)) 1rem;
+    padding: 1.5rem 1rem calc(5rem + var(--safe-bottom, var(--inset-bottom, 0px))) 1rem;
+    /* iOS momentum scrolling */
+    -webkit-overflow-scrolling: touch;
 }
 
 .metric-cards {
@@ -128,6 +155,13 @@ body {
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
+    /* GPU acceleration for smooth button animations */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform;
+    /* Ensure proper touch target size (48px minimum per WCAG) */
+    min-width: 48px;
+    min-height: 48px;
 }
 
 .btn-time span.helper {
@@ -203,6 +237,7 @@ body {
 }
 
 .calendar-cell {
+    position: relative;
     background-color: var(--surface-color);
     border-radius: 6px;
     height: 42px;
@@ -265,14 +300,17 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    height: calc(60px + var(--inset-bottom, 0px));
+    height: calc(60px + var(--safe-bottom, var(--inset-bottom, 0px)));
     background-color: var(--surface-color);
     border-top: 1px solid var(--border-color);
     display: flex;
     justify-content: space-around;
     align-items: center;
     z-index: 10;
-    padding-bottom: var(--inset-bottom, 0px);
+    padding-bottom: var(--safe-bottom, var(--inset-bottom, 0px));
+    /* GPU layer promotion */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 .nav-item {
@@ -286,6 +324,9 @@ body {
     transition: color 0.2s;
     width: 100%;
     padding: 8px 0;
+    /* Ensure minimum touch target size (48x48) per accessibility guidelines */
+    min-height: 48px;
+    justify-content: center;
 }
 
 .nav-item.active,
@@ -332,7 +373,8 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 16px; /* Prevents iOS auto-zoom on focus */
+    -webkit-appearance: none;
     appearance: none;
     cursor: pointer;
 }
@@ -373,4 +415,42 @@ body {
 
 .success-notification .notification-title {
     color: var(--success-color);
+}
+
+.missing-journal-indicator {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--danger-color);
+}
+
+.journal-textarea {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    font-family: inherit;
+    font-size: 16px; /* Prevents iOS auto-zoom on focus */
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 80px;
+    margin-top: 0.5rem;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.journal-save {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
 }
