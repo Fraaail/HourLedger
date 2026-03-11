@@ -49,6 +49,6 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Validate NativePHP integration (`php artisan native:serve` or `php artisan serve`).
 - [x] Write feature tests for all core functionality (dashboard, time in/out, calendar, settings, timezone).
 - [x] Create a `scripts/setup.php` script to automate `.env`, app key, database creation and migrations securely across operating systems.
-- [x] Implement CI/CD pipeline for automated testing (GitHub Actions).
+- [x] Implement CI/CD pipeline for automated testing (GitHub Actions using PHP 8.4).
 - [x] Verify tests pass successfully.
 - [x] Run `pre-commit run --all-files` and fix any issues.

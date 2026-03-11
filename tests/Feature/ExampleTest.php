@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\TimeEntry;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Carbon;
 
 test('dashboard loads correctly', function () {
@@ -9,7 +10,7 @@ test('dashboard loads correctly', function () {
 });
 
 test('user can log time in', function () {
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/time-in');
 
     $response->assertStatus(302);
@@ -27,7 +28,7 @@ test('user can log time out', function () {
         'time_in' => $timeIn,
     ]);
 
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/time-out');
     $response->assertStatus(302);
 

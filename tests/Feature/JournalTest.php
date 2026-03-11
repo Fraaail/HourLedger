@@ -2,10 +2,11 @@
 
 use App\Models\Journal;
 use App\Models\TimeEntry;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 
 test('can save a journal entry', function () {
     $date = '2023-10-10';
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post("/journal/{$date}", ['content' => 'Worked on the project.']);
 
     $response->assertStatus(302);
@@ -19,7 +20,7 @@ test('can update a journal entry', function () {
     $date = '2023-10-10';
     Journal::create(['date' => $date, 'content' => 'Old content.']);
 
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post("/journal/{$date}", ['content' => 'New content.']);
 
     $response->assertStatus(302);

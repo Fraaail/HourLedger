@@ -14,7 +14,7 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 
 ## Tech Stack
 
-- **Framework:** Laravel 12 (PHP)
+- **Framework:** Laravel 12 (PHP 8.4+)
 - **Frontend:** Blade templates + vanilla CSS/JS
 - **Database:** SQLite (local)
 - **Mobile Shell:** NativePHP (Android / iOS)

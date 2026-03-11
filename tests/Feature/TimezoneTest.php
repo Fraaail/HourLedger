@@ -2,12 +2,13 @@
 
 use App\Models\Setting;
 use App\Models\TimeEntry;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Carbon;
 
 test('time in uses configured timezone for date', function () {
     Setting::set('timezone', 'Asia/Manila');
 
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/time-in');
 
     $response->assertStatus(302);
@@ -29,7 +30,7 @@ test('time out uses configured timezone', function () {
         'time_in' => $timeIn,
     ]);
 
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/time-out');
 
     $response->assertStatus(302);
@@ -76,7 +77,7 @@ test('dashboard works without timezone setting', function () {
 });
 
 test('time in works without timezone setting', function () {
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/time-in');
 
     $response->assertStatus(302);
@@ -90,7 +91,7 @@ test('time in stores timestamps in utc not local timezone', function () {
 
     Carbon::setTestNow(Carbon::create(2026, 3, 10, 1, 0, 0, 'UTC'));
 
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/time-in');
 
     $response->assertStatus(302);
@@ -112,7 +113,7 @@ test('duration is correct across timezone offsets', function () {
         'time_in' => Carbon::now()->subHours(8),
     ]);
 
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/time-out');
 
     $entry = TimeEntry::where('date', $today)->first();

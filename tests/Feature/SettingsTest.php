@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Setting;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 
 test('settings page loads correctly', function () {
     $response = $this->get('/settings');
@@ -17,7 +18,7 @@ test('settings page displays timezone selector', function () {
 });
 
 test('user can update timezone', function () {
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/settings/timezone', ['timezone' => 'Asia/Manila']);
 
     $response->assertStatus(302);
@@ -30,14 +31,14 @@ test('user can update timezone', function () {
 });
 
 test('timezone update rejects invalid timezone', function () {
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/settings/timezone', ['timezone' => 'Invalid/Zone']);
 
     $response->assertSessionHasErrors('timezone');
 });
 
 test('timezone update rejects empty timezone', function () {
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/settings/timezone', ['timezone' => '']);
 
     $response->assertSessionHasErrors('timezone');
