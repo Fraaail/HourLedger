@@ -28,7 +28,7 @@
         </main>
 
         <nav class="bottom-nav">
-            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <a href="{{ route('dashboard', [], false) }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <div class="nav-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -38,7 +38,7 @@
                 </div>
                 <span>Dashboard</span>
             </a>
-            <a href="{{ route('calendar') }}" class="nav-item {{ request()->routeIs('calendar') ? 'active' : '' }}">
+            <a href="{{ route('calendar', [], false) }}" class="nav-item {{ request()->routeIs('calendar') ? 'active' : '' }}">
                 <div class="nav-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -49,7 +49,7 @@
                 </div>
                 <span>Calendar</span>
             </a>
-            <a href="{{ route('settings') }}" class="nav-item {{ request()->routeIs('settings') ? 'active' : '' }}">
+            <a href="{{ route('settings', [], false) }}" class="nav-item {{ request()->routeIs('settings') ? 'active' : '' }}">
                 <div class="nav-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"></circle>

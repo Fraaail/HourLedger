@@ -58,6 +58,7 @@ The app uses `viewport-fit=cover` to render edge-to-edge on mobile devices.
 - Native `env(safe-area-inset-*)` CSS functions handle notch and home-indicator.
 - Form inputs use `font-size: 16px` to prevent Safari auto-zoom.
 - Momentum scrolling enabled via `-webkit-overflow-scrolling: touch`.
+- All POST actions use JavaScript `fetch()` instead of native HTML forms to work around WKWebView silently dropping `HTTPBody` on form submissions.
 
 ### Both Platforms
 - Dynamic viewport height (`100dvh`) avoids toolbar overlap.

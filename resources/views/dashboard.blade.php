@@ -36,21 +36,15 @@
 
 <div class="action-area">
     @if(!$entryToday || !$entryToday->time_in)
-        <form action="{{ route('time.in') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn-time in">
-                TIME IN
-                <span class="helper">{{ now()->timezone($tz)->format('h:i A') }}</span>
-            </button>
-        </form>
+        <button type="button" class="btn-time in" id="clockBtn" onclick="submitClock('{{ route('time.in', [], false) }}')">
+            TIME IN
+            <span class="helper">{{ now()->timezone($tz)->format('h:i A') }}</span>
+        </button>
     @elseif($entryToday && !$entryToday->time_out)
-        <form action="{{ route('time.out') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn-time out">
-                TIME OUT
-                <span class="helper">In at {{ $entryToday->time_in->timezone($tz)->format('h:i A') }}</span>
-            </button>
-        </form>
+        <button type="button" class="btn-time out" id="clockBtn" onclick="submitClock('{{ route('time.out', [], false) }}')">
+            TIME OUT
+            <span class="helper">In at {{ $entryToday->time_in->timezone($tz)->format('h:i A') }}</span>
+        </button>
     @else
         <button type="button" class="btn-time" disabled>
             COMPLETED
@@ -58,5 +52,25 @@
         </button>
     @endif
 </div>
+
+<script>
+function submitClock(url) {
+    var btn = document.getElementById('clockBtn');
+    if (btn) btn.disabled = true;
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'text/html'
+        },
+        body: '_token={{ csrf_token() }}'
+    }).then(function() {
+        window.location.href = '{{ route('dashboard', [], false) }}';
+    }).catch(function() {
+        window.location.href = '{{ route('dashboard', [], false) }}';
+    });
+}
+</script>
 
 @endsection

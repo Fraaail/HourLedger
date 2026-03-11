@@ -18,8 +18,7 @@
     <h2 class="settings-heading">Timezone</h2>
     <p class="settings-description">Select your local timezone. All timestamps will be displayed in this timezone.</p>
 
-    <form action="{{ route('settings.timezone') }}" method="POST">
-        @csrf
+    <form id="timezoneForm" onsubmit="return submitTimezone(event)">
         <div class="settings-field">
             <label for="timezone" class="settings-label">Timezone</label>
             <select name="timezone" id="timezone" class="settings-select">
@@ -35,6 +34,27 @@
 
         <button type="submit" class="settings-save">Save Timezone</button>
     </form>
+
+<script>
+function submitTimezone(e) {
+    e.preventDefault();
+    var tz = document.getElementById('timezone').value;
+    fetch('{{ route('settings.timezone', [], false) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'text/html'
+        },
+        body: '_token={{ csrf_token() }}&timezone=' + encodeURIComponent(tz)
+    }).then(function() {
+        window.location.href = '{{ route('settings', [], false) }}';
+    }).catch(function() {
+        window.location.href = '{{ route('settings', [], false) }}';
+    });
+    return false;
+}
+</script>
 </div>
 
 <div class="settings-section">

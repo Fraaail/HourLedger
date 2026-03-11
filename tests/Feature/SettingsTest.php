@@ -76,5 +76,5 @@ test('settings nav link appears in layout', function () {
     $response = $this->get('/');
     $response->assertStatus(200);
     $response->assertSee('Settings', false);
-    $response->assertSee(route('settings'), false);
+    $response->assertSee(route('settings', [], false), false);
 });

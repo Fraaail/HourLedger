@@ -77,8 +77,7 @@
     </div>
     <div style="margin-top: 1rem;">
         <span style="color: var(--text-secondary); font-size: 0.85rem;">Journal</span>
-        <form id="journalForm" method="POST" action="">
-            @csrf
+        <form id="journalForm" onsubmit="return submitJournal(event)">
             <textarea name="content" id="journalContent" class="journal-textarea" placeholder="Write your activities here..."></textarea>
             <button type="submit" class="journal-save">Save Journal</button>
         </form>
@@ -86,6 +85,8 @@
 </div>
 
 <script>
+    var currentJournalUrl = '';
+
     function showDetails(dateStr, formattedDate, timeIn, timeOut, total, cellElement) {
         const detailsBox = document.getElementById('calendarDetails');
 
@@ -99,9 +100,28 @@
 
         const journalText = cellElement.querySelector('.journal-data').innerText;
         document.getElementById('journalContent').value = journalText;
-        document.getElementById('journalForm').action = '/journal/' + dateStr;
+        currentJournalUrl = '/journal/' + dateStr;
 
         detailsBox.classList.add('visible');
+    }
+
+    function submitJournal(e) {
+        e.preventDefault();
+        var content = document.getElementById('journalContent').value;
+        fetch(currentJournalUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'text/html'
+            },
+            body: '_token={{ csrf_token() }}&content=' + encodeURIComponent(content)
+        }).then(function() {
+            window.location.href = '{{ route('calendar', [], false) }}';
+        }).catch(function() {
+            window.location.href = '{{ route('calendar', [], false) }}';
+        });
+        return false;
     }
 </script>
 
