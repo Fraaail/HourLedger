@@ -55,6 +55,13 @@
 
 <script>
 function submitClock(url) {
+    var isClockIn = url.indexOf('clock-in') !== -1;
+    var message = isClockIn ? 'Are you sure you want to Clock In?' : 'Are you sure you want to Clock Out?';
+
+    if (!confirm(message)) {
+        return;
+    }
+
     var btn = document.getElementById('clockBtn');
     if (btn) btn.disabled = true;
     fetch(url, {

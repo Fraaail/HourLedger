@@ -18,17 +18,15 @@
     <h2 class="settings-heading">Theme</h2>
     <p class="settings-description">Choose your preferred appearance.</p>
 
-    <form id="themeForm" onsubmit="return submitTheme(event)">
+    <form id="themeForm">
         <div class="settings-field">
             <label for="theme" class="settings-label">App Theme</label>
-            <select name="theme" id="theme" class="settings-select" onchange="previewTheme(this.value)">
+            <select name="theme" id="theme" class="settings-select" onchange="submitTheme(this.value)">
                 <option value="dark" {{ $theme === 'dark' ? 'selected' : '' }}>Dark</option>
                 <option value="light" {{ $theme === 'light' ? 'selected' : '' }}>Light</option>
                 <option value="system" {{ $theme === 'system' ? 'selected' : '' }}>System (Auto)</option>
             </select>
         </div>
-
-        <button type="submit" class="settings-save">Save Theme</button>
     </form>
 </div>
 
@@ -36,10 +34,10 @@
     <h2 class="settings-heading">Timezone</h2>
     <p class="settings-description">Select your local timezone. All timestamps will be displayed in this timezone.</p>
 
-    <form id="timezoneForm" onsubmit="return submitTimezone(event)">
+    <form id="timezoneForm">
         <div class="settings-field">
             <label for="timezone" class="settings-label">Timezone</label>
-            <select name="timezone" id="timezone" class="settings-select">
+            <select name="timezone" id="timezone" class="settings-select" onchange="submitTimezone(this.value)">
                 @foreach($timezones as $tz)
                     <option value="{{ $tz }}" {{ $timezone === $tz ? 'selected' : '' }}>{{ $tz }}</option>
                 @endforeach
@@ -49,19 +47,14 @@
         @error('timezone')
             <p class="settings-error">{{ $message }}</p>
         @enderror
-
-        <button type="submit" class="settings-save">Save Timezone</button>
     </form>
 </div>
 
 <script>
-function previewTheme(theme) {
+function submitTheme(theme) {
+    // Immediate visual feedback
     window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: theme } }));
-}
 
-function submitTheme(e) {
-    e.preventDefault();
-    var theme = document.getElementById('theme').value;
     fetch('{{ route('settings.theme', [], false) }}', {
         method: 'POST',
         headers: {
@@ -75,12 +68,9 @@ function submitTheme(e) {
     }).catch(function() {
         window.location.href = '{{ route('settings', [], false) }}';
     });
-    return false;
 }
 
-function submitTimezone(e) {
-    e.preventDefault();
-    var tz = document.getElementById('timezone').value;
+function submitTimezone(tz) {
     fetch('{{ route('settings.timezone', [], false) }}', {
         method: 'POST',
         headers: {
@@ -94,7 +84,6 @@ function submitTimezone(e) {
     }).catch(function() {
         window.location.href = '{{ route('settings', [], false) }}';
     });
-    return false;
 }
 </script>
 

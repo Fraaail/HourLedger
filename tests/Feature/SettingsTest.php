@@ -107,3 +107,10 @@ test('settings page shows selected theme', function () {
     $response->assertStatus(200);
     $response->assertSee('value="dark" selected', false);
 });
+
+test('settings page does not have manual save buttons', function () {
+    $response = $this->get('/settings');
+    $response->assertStatus(200);
+    $response->assertDontSee('Save Theme', false);
+    $response->assertDontSee('Save Timezone', false);
+});
