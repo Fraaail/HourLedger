@@ -9,6 +9,7 @@
     --danger-color: #f85149;
     --success-color: #238636;
     --font-mono: 'JetBrains Mono', monospace;
+
     /* NativePHP injects --inset-top/right/bottom/left via JS.
        Provide defaults so the layout works outside the native shell too.
        iOS env() safe-area-inset values are used as fallbacks. */
@@ -26,6 +27,44 @@
     --safe-left: max(env(safe-area-inset-left, 0px), var(--inset-left));
 }
 
+.theme-dark {
+    --bg-color: #0d1117;
+    --surface-color: #161b22;
+    --border-color: #30363d;
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b949e;
+    --accent-color: #2f81f7;
+    --accent-hover: #1f6feb;
+    --danger-color: #f85149;
+    --success-color: #238636;
+}
+
+.theme-light {
+    --bg-color: #f6f8fa;
+    --surface-color: #ffffff;
+    --border-color: #d0d7de;
+    --text-primary: #24292f;
+    --text-secondary: #57606a;
+    --accent-color: #0969da;
+    --accent-hover: #0550ae;
+    --danger-color: #cf222e;
+    --success-color: #1a7f37;
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not(.theme-dark):not(.theme-light) {
+        --bg-color: #f6f8fa;
+        --surface-color: #ffffff;
+        --border-color: #d0d7de;
+        --text-primary: #24292f;
+        --text-secondary: #57606a;
+        --accent-color: #0969da;
+        --accent-hover: #0550ae;
+        --danger-color: #cf222e;
+        --success-color: #1a7f37;
+    }
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -41,6 +80,7 @@ html {
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
     font-family: var(--font-mono);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;

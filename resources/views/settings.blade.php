@@ -15,6 +15,24 @@
 @endif
 
 <div class="settings-section">
+    <h2 class="settings-heading">Theme</h2>
+    <p class="settings-description">Choose your preferred appearance.</p>
+
+    <form id="themeForm" onsubmit="return submitTheme(event)">
+        <div class="settings-field">
+            <label for="theme" class="settings-label">App Theme</label>
+            <select name="theme" id="theme" class="settings-select" onchange="previewTheme(this.value)">
+                <option value="dark" {{ $theme === 'dark' ? 'selected' : '' }}>Dark</option>
+                <option value="light" {{ $theme === 'light' ? 'selected' : '' }}>Light</option>
+                <option value="system" {{ $theme === 'system' ? 'selected' : '' }}>System (Auto)</option>
+            </select>
+        </div>
+
+        <button type="submit" class="settings-save">Save Theme</button>
+    </form>
+</div>
+
+<div class="settings-section">
     <h2 class="settings-heading">Timezone</h2>
     <p class="settings-description">Select your local timezone. All timestamps will be displayed in this timezone.</p>
 
@@ -34,8 +52,32 @@
 
         <button type="submit" class="settings-save">Save Timezone</button>
     </form>
+</div>
 
 <script>
+function previewTheme(theme) {
+    window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: theme } }));
+}
+
+function submitTheme(e) {
+    e.preventDefault();
+    var theme = document.getElementById('theme').value;
+    fetch('{{ route('settings.theme', [], false) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'text/html'
+        },
+        body: '_token={{ csrf_token() }}&theme=' + encodeURIComponent(theme)
+    }).then(function() {
+        window.location.href = '{{ route('settings', [], false) }}';
+    }).catch(function() {
+        window.location.href = '{{ route('settings', [], false) }}';
+    });
+    return false;
+}
+
 function submitTimezone(e) {
     e.preventDefault();
     var tz = document.getElementById('timezone').value;
@@ -55,7 +97,6 @@ function submitTimezone(e) {
     return false;
 }
 </script>
-</div>
 
 <div class="settings-section">
     <h2 class="settings-heading">Current Time</h2>

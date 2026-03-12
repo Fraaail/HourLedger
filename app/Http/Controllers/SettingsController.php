@@ -11,8 +11,9 @@ class SettingsController extends Controller
     {
         $timezone = Setting::get('timezone', config('app.timezone'));
         $timezones = timezone_identifiers_list();
+        $theme = Setting::get('theme', 'dark');
 
-        return view('settings', compact('timezone', 'timezones'));
+        return view('settings', compact('timezone', 'timezones', 'theme'));
     }
 
     public function updateTimezone(Request $request)
@@ -24,5 +25,16 @@ class SettingsController extends Controller
         Setting::set('timezone', $request->input('timezone'));
 
         return redirect()->route('settings')->with('success', 'Timezone updated.');
+    }
+
+    public function updateTheme(Request $request)
+    {
+        $request->validate([
+            'theme' => ['required', 'string', 'in:dark,light,system'],
+        ]);
+
+        Setting::set('theme', $request->input('theme'));
+
+        return redirect()->route('settings')->with('success', 'Theme updated.');
     }
 }

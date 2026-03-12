@@ -7,6 +7,7 @@ test('settings page loads correctly', function () {
     $response = $this->get('/settings');
     $response->assertStatus(200);
     $response->assertSee('Timezone', false);
+    $response->assertSee('Theme', false);
 });
 
 test('settings page displays timezone selector', function () {
@@ -77,4 +78,32 @@ test('settings nav link appears in layout', function () {
     $response->assertStatus(200);
     $response->assertSee('Settings', false);
     $response->assertSee(route('settings', [], false), false);
+});
+
+test('user can update theme', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->post('/settings/theme', ['theme' => 'light']);
+
+    $response->assertStatus(302);
+    $response->assertRedirect(route('settings'));
+
+    $this->assertDatabaseHas('settings', [
+        'key' => 'theme',
+        'value' => 'light',
+    ]);
+});
+
+test('theme update rejects invalid theme', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->post('/settings/theme', ['theme' => 'invalid-theme']);
+
+    $response->assertSessionHasErrors('theme');
+});
+
+test('settings page shows selected theme', function () {
+    Setting::set('theme', 'dark');
+
+    $response = $this->get('/settings');
+    $response->assertStatus(200);
+    $response->assertSee('value="dark" selected', false);
 });

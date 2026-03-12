@@ -11,4 +11,5 @@ Route::post('/clock-out', [TimeEntryController::class, 'timeOut'])->name('time.o
 Route::get('/calendar', [TimeEntryController::class, 'calendar'])->name('calendar');
 Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 Route::post('/settings/timezone', [SettingsController::class, 'updateTimezone'])->name('settings.timezone');
+Route::post('/settings/theme', [SettingsController::class, 'updateTheme'])->name('settings.theme');
 Route::post('/journal/{date}', [JournalController::class, 'store'])->name('journal.store');

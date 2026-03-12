@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="theme-{{ \App\Models\Setting::get('theme', 'dark') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="HourLedger">
     <!-- Android: Chrome address bar theming -->
-    <meta name="theme-color" content="#0d1117">
+    <meta name="theme-color" content="#0d1117" id="theme-meta">
     <meta name="mobile-web-app-capable" content="yes">
     <!-- JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,5 +60,37 @@
             </a>
         </nav>
     </div>
+    <script>
+        (function() {
+            const theme = "{{ \App\Models\Setting::get('theme', 'dark') }}";
+            const html = document.documentElement;
+            const meta = document.getElementById('theme-meta');
+
+            function updateTheme(val) {
+                html.classList.remove('theme-dark', 'theme-light', 'theme-system');
+                html.classList.add('theme-' + val);
+
+                if (meta) {
+                    if (val === 'light' || (val === 'system' && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                        meta.setAttribute('content', '#f6f8fa');
+                    } else {
+                        meta.setAttribute('content', '#0d1117');
+                    }
+                }
+            }
+
+            updateTheme(theme);
+
+            if (theme === 'system') {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+                    updateTheme('system');
+                });
+            }
+
+            window.addEventListener('theme-changed', (e) => {
+                updateTheme(e.detail.theme);
+            });
+        })();
+    </script>
 </body>
 </html>

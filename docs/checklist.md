@@ -41,6 +41,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
     - [x] Mark past days lacking a journal log with a red indicator.
 - [x] **Settings:**
     - [x] Manual timezone selection (e.g. Asia/Manila for Philippines).
+    - [x] Theme selection (Dark, Light, System) with instant CSS preview.
     - [x] Timezone-aware timestamps throughout the app (dashboard, calendar, time in/out).
     - [x] All times stored in UTC; converted to user timezone for display only.
     - [x] Settings page accessible from bottom navigation.

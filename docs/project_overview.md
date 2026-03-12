@@ -8,7 +8,7 @@ HourLedger is a NativePHP mobile application designed specifically as an offline
 - **Simplicity:** Provide an easy-to-use interface to clock in and clock out daily.
 - **Accuracy:** Track the aggregate hours and days rendered to ensure interns complete their OJT requirement.
 - **Awareness:** Alert interns if they miss entries for previous days.
-- **Professional Aesthetics:** Deliver a pristine setup using a dark/minimal scheme with JetBrains Mono, omitting emojis and inconsistent color schemes.
+- **Professional Aesthetics:** Deliver a pristine setup with support for both Dark and Light schemes using JetBrains Mono.
 
 ## System Architecture
 

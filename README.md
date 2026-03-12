@@ -10,7 +10,8 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 - **Journal Entries** — Write daily journals for activities, integrated directly in the calendar view with missing entry indicators.
 - **Missing Entry Alerts** — Notifications for weekdays without a completed time entry.
 - **Timezone Selection** — Manually select your timezone (e.g. Asia/Manila) from settings. All times are stored in UTC and converted to your chosen timezone for display.
-- **Mobile-Optimized** — Dark-themed, JetBrains Mono typography, safe-area-aware layout optimized for both Android and iOS devices.
+- **Theme Selector** — Choose between Dark, Light, and System themes. Includes instant preview and follows system preferences.
+- **Mobile-Optimized** — JetBrains Mono typography, safe-area-aware layout optimized for both Android and iOS devices.
 
 ## Tech Stack
 
@@ -75,7 +76,7 @@ The bottom navigation provides access to three views:
 
 - **Dashboard** — Main view with total rendered time/days and Time In/Out button.
 - **Calendar** — Monthly grid with day-level time details on tap.
-- **Settings** — Timezone selection and current time display.
+- **Settings** — Theme selection, timezone selection, and current time display.
 
 ## Project Documentation
 
