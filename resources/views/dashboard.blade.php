@@ -53,18 +53,49 @@
     @endif
 </div>
 
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-content">
+        <div class="modal-title" id="modalTitle">Confirm Action</div>
+        <div class="modal-body" id="modalBody">Are you sure you want to proceed?</div>
+        <div class="modal-actions">
+            <button type="button" class="btn-modal confirm" id="modalConfirmBtn">CONFIRM</button>
+            <button type="button" class="btn-modal cancel" onclick="closeModal()">CANCEL</button>
+        </div>
+    </div>
+</div>
+
 <script>
+let currentUrl = '';
+
 function submitClock(url) {
-    var isClockIn = url.indexOf('clock-in') !== -1;
-    var message = isClockIn ? 'Are you sure you want to Clock In?' : 'Are you sure you want to Clock Out?';
+    currentUrl = url;
+    const isClockIn = url.indexOf('clock-in') !== -1;
+    const modal = document.getElementById('confirmModal');
+    const title = document.getElementById('modalTitle');
+    const body = document.getElementById('modalBody');
+    const confirmBtn = document.getElementById('modalConfirmBtn');
 
-    if (!confirm(message)) {
-        return;
-    }
+    title.innerText = isClockIn ? 'Clock In' : 'Clock Out';
+    body.innerText = isClockIn
+        ? 'Are you sure you want to clock in? This will record your current start time.'
+        : 'Are you sure you want to clock out? This will calculate and record your total hours for today.';
 
-    var btn = document.getElementById('clockBtn');
+    confirmBtn.className = isClockIn ? 'btn-modal confirm' : 'btn-modal confirm danger';
+    confirmBtn.onclick = executeSubmit;
+
+    modal.classList.add('visible');
+}
+
+function closeModal() {
+    document.getElementById('confirmModal').classList.remove('visible');
+}
+
+function executeSubmit() {
+    closeModal();
+    const btn = document.getElementById('clockBtn');
     if (btn) btn.disabled = true;
-    fetch(url, {
+
+    fetch(currentUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

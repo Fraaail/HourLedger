@@ -2,8 +2,18 @@
 
 @section('content')
 
+<div id="statusNotification" class="notification success-notification" style="display: none; opacity: 0; transition: opacity 0.3s ease;">
+    <div class="notification-title" id="statusMessage">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span id="statusText">Settings updated.</span>
+    </div>
+</div>
+
 @if(session('success'))
-<div class="notification success-notification">
+<div class="notification success-notification" id="sessionNotification">
     <div class="notification-title">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -12,6 +22,7 @@
         {{ session('success') }}
     </div>
 </div>
+<script>setTimeout(() => document.getElementById('sessionNotification')?.remove(), 3000);</script>
 @endif
 
 <div class="settings-section">
@@ -43,14 +54,32 @@
                 @endforeach
             </select>
         </div>
-
-        @error('timezone')
-            <p class="settings-error">{{ $message }}</p>
-        @enderror
     </form>
 </div>
 
+<div class="settings-section">
+    <h2 class="settings-heading">Current Time</h2>
+    <p class="settings-description">Based on your selected timezone.</p>
+    <div class="metric-card" style="margin-top: 1rem;">
+        <h3 id="currentTimeLabel">{{ $timezone }}</h3>
+        <div class="value" id="currentTimeValue">{{ now()->timezone($timezone)->format('h:i A') }}</div>
+    </div>
+</div>
+
 <script>
+function showStatus(message) {
+    const notify = document.getElementById('statusNotification');
+    const text = document.getElementById('statusText');
+    text.innerText = message;
+    notify.style.display = 'block';
+    setTimeout(() => notify.style.opacity = '1', 10);
+
+    setTimeout(() => {
+        notify.style.opacity = '0';
+        setTimeout(() => notify.style.display = 'none', 300);
+    }, 3000);
+}
+
 function submitTheme(theme) {
     // Immediate visual feedback
     window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: theme } }));
@@ -60,13 +89,16 @@ function submitTheme(theme) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'text/html'
+            'Accept': 'application/json'
         },
         body: '_token={{ csrf_token() }}&theme=' + encodeURIComponent(theme)
-    }).then(function() {
-        window.location.href = '{{ route('settings', [], false) }}';
-    }).catch(function() {
-        window.location.href = '{{ route('settings', [], false) }}';
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showStatus(data.message);
+        }
+    }).catch(error => {
+        console.error('Theme update failed:', error);
     });
 }
 
@@ -76,24 +108,20 @@ function submitTimezone(tz) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'text/html'
+            'Accept': 'application/json'
         },
         body: '_token={{ csrf_token() }}&timezone=' + encodeURIComponent(tz)
-    }).then(function() {
-        window.location.href = '{{ route('settings', [], false) }}';
-    }).catch(function() {
-        window.location.href = '{{ route('settings', [], false) }}';
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('currentTimeLabel').innerText = data.timezone;
+            document.getElementById('currentTimeValue').innerText = data.currentTime;
+            showStatus(data.message);
+        }
+    }).catch(error => {
+        console.error('Timezone update failed:', error);
     });
 }
 </script>
-
-<div class="settings-section">
-    <h2 class="settings-heading">Current Time</h2>
-    <p class="settings-description">Based on your selected timezone.</p>
-    <div class="metric-card" style="margin-top: 1rem;">
-        <h3>{{ $timezone }}</h3>
-        <div class="value">{{ now()->timezone($timezone)->format('h:i A') }}</div>
-    </div>
-</div>
 
 @endsection

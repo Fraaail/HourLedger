@@ -494,3 +494,107 @@ body {
     cursor: pointer;
     width: 100%;
 }
+/* Confirmation Modal */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 20px;
+}
+
+.modal-overlay.visible {
+    display: flex;
+    animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+.modal-content {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(20px);
+    text-align: center;
+}
+
+.modal-overlay.visible .modal-content {
+    animation: modalSlideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.modal-body {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-direction: column;
+}
+
+.btn-modal {
+    padding: 0.875rem;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.btn-modal.confirm {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-modal.confirm.danger {
+    background-color: var(--danger-color);
+}
+
+.btn-modal.confirm:active {
+    transform: scale(0.96);
+    filter: brightness(1.1);
+}
+
+.btn-modal.cancel {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-modal.cancel:active {
+    background-color: var(--border-color);
+}

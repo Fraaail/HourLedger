@@ -32,7 +32,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] **Dashboard (Home View):**
     - [x] Display Total Rendered Time & Total Rendered Days dynamically.
     - [x] Show action button (Time In / Time Out) based on current state.
-    - [x] Added confirmation dialog for Time In / Time Out to prevent accidental clicks.
+    - [x] Redesigned confirmation dialog for Time In / Time Out with custom modal to match system aesthetics.
     - [x] Display missing entries notification at the top of the screen if applicable.
 - [x] **Calendar View:**
     - [x] Render a monthly grid layout using CSS grid.
@@ -41,8 +41,8 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
     - [x] Integrate daily journal functionality in the tap-to-reveal details.
     - [x] Mark past days lacking a journal log with a red indicator.
 - [x] **Settings:**
-    - [x] Theme selection (Dark, Light, System) with instant preview and automatic saving.
-    - [x] Timezone selection with automatic saving.
+    - [x] Theme selection (Dark, Light, System) with instant preview and automatic asynchronous saving (no page reload).
+    - [x] Timezone selection with automatic asynchronous saving and dynamic UI updates (no page reload).
     - [x] Timezone-aware timestamps throughout the app (dashboard, calendar, time in/out).
     - [x] All times stored in UTC; converted to user timezone for display only.
     - [x] Settings page accessible from bottom navigation.

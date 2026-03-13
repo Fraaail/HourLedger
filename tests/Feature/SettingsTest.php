@@ -93,6 +93,40 @@ test('user can update theme', function () {
     ]);
 });
 
+test('user can update timezone via ajax', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/settings/timezone', ['timezone' => 'Asia/Manila']);
+
+    $response->assertStatus(200);
+    $response->assertJson([
+        'success' => true,
+        'message' => 'Timezone updated.',
+        'timezone' => 'Asia/Manila',
+    ]);
+    $response->assertJsonStructure(['currentTime']);
+
+    $this->assertDatabaseHas('settings', [
+        'key' => 'timezone',
+        'value' => 'Asia/Manila',
+    ]);
+});
+
+test('user can update theme via ajax', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/settings/theme', ['theme' => 'light']);
+
+    $response->assertStatus(200);
+    $response->assertJson([
+        'success' => true,
+        'message' => 'Theme updated.',
+    ]);
+
+    $this->assertDatabaseHas('settings', [
+        'key' => 'theme',
+        'value' => 'light',
+    ]);
+});
+
 test('theme update rejects invalid theme', function () {
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/settings/theme', ['theme' => 'invalid-theme']);

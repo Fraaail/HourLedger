@@ -24,6 +24,15 @@ class SettingsController extends Controller
 
         Setting::set('timezone', $request->input('timezone'));
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Timezone updated.',
+                'currentTime' => now()->timezone($request->input('timezone'))->format('h:i A'),
+                'timezone' => $request->input('timezone'),
+            ]);
+        }
+
         return redirect()->route('settings')->with('success', 'Timezone updated.');
     }
 
@@ -34,6 +43,10 @@ class SettingsController extends Controller
         ]);
 
         Setting::set('theme', $request->input('theme'));
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Theme updated.']);
+        }
 
         return redirect()->route('settings')->with('success', 'Theme updated.');
     }
