@@ -57,3 +57,13 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Implement CI/CD pipeline for automated testing (GitHub Actions using PHP 8.4).
 - [x] Verify tests pass successfully.
 - [x] Run `pre-commit run --all-files` and fix any issues.
+
+## Phase 6: Mobile Performance Hardening (Android + iOS)
+- [x] Optimize dashboard metrics query into a single aggregate query.
+- [x] Replace missing-entry N+1 date checks with a bulk completed-date lookup.
+- [x] Restrict calendar data retrieval to the active month range.
+- [x] Add JSON responses for clock in/out and journal save to support low-latency fetch workflows.
+- [x] Add request-level and persistent cache for settings lookups with proper cache invalidation.
+- [x] Add mobile tab prefetch behavior for bottom navigation.
+- [x] Add feature tests for AJAX clock in/out and journal save flows.
+- [x] Re-run full quality pipeline: Pint, PHPUnit/Pest, Vite build, and pre-commit hooks.

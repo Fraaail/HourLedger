@@ -11,6 +11,7 @@
     <!-- Android: Chrome address bar theming -->
     <meta name="theme-color" content="#0d1117" id="theme-meta">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
     <!-- JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,6 +90,29 @@
 
             window.addEventListener('theme-changed', (e) => {
                 updateTheme(e.detail.theme);
+            });
+        })();
+
+        // Warm route responses to reduce perceived delay on mobile tab switches.
+        (function prefetchBottomNav() {
+            const links = document.querySelectorAll('.bottom-nav .nav-item');
+            links.forEach((link) => {
+                link.addEventListener('touchstart', () => {
+                    const href = link.getAttribute('href');
+                    if (!href) {
+                        return;
+                    }
+
+                    fetch(href, {
+                        method: 'GET',
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }).catch(() => {
+                        // Ignore prefetch failures; regular navigation still works.
+                    });
+                }, { once: true, passive: true });
             });
         })();
     </script>

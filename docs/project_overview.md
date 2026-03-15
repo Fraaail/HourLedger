@@ -17,6 +17,8 @@ The architecture represents a self-contained web app running inside a native mob
 1. **Native Shell (NativePHP):** Serves the application to the user via an embedded server and webview, packaging the app for mobile operating systems (Android/iOS). Includes platform-specific optimizations (safe-area insets, theme-color, apple-mobile-web-app meta tags, touch-action, GPU-accelerated transforms).
 2. **Backend Framework (Laravel PHP):**
    - Handles the business logic: calculating hours, storing in/out times, identifying missing entries.
+   - Uses query-level optimizations to reduce mobile latency: single-query dashboard aggregates, bulk missing-entry resolution, and month-scoped calendar retrieval.
+   - Uses cached settings lookups (request-level + persistent cache) to avoid repeated reads in a single screen render.
    - Provides API endpoints or controller actions for the frontend.
 3. **Database (SQLite):**
    - A singular local SQLite file residing in the app's local storage directory.
@@ -25,6 +27,8 @@ The architecture represents a self-contained web app running inside a native mob
    - Contains a mobile-only layout with rigid viewport bounds.
    - Powered by standard CSS for layout and animations, adhering to a strict professional palette.
    - Interactivity built strictly with smooth transitions for a dynamic mobile feel.
+   - Uses JSON-first fetch flows for clock and journal actions to reduce redirect overhead in Android and iOS webviews.
+   - Prefetches bottom-tab destinations on touchstart to make tab switching feel more immediate on mobile devices.
 5. **Font:** JetBrains Mono for system-wide typography.
 
 ## System Flow
@@ -37,6 +41,7 @@ The architecture represents a self-contained web app running inside a native mob
 3. **Action (Time In/Out):**
    - Intern taps the central Call-To-Action (CTA).
    - The app records the current system timestamp in the database and computes the duration if clocking out.
+   - The mobile client submits via fetch and receives a JSON success response with target route to avoid extra redirect round-trips.
 4. **Calendar View Interaction:**
    - Intern navigates to the 'Calendar View'.
    - The app displays a monthly grid, highlighting days with logged hours.

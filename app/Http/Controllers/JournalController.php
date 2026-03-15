@@ -15,6 +15,14 @@ class JournalController extends Controller
             ['content' => $request->input('content')]
         );
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Journal saved.',
+                'redirect' => route('calendar', [], false),
+            ]);
+        }
+
         return back();
     }
 }

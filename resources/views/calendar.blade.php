@@ -113,11 +113,13 @@
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'text/html'
+                'Accept': 'application/json'
             },
             body: '_token={{ csrf_token() }}&content=' + encodeURIComponent(content)
-        }).then(function() {
-            window.location.href = '{{ route('calendar', [], false) }}';
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            window.location.href = data.redirect || '{{ route('calendar', [], false) }}';
         }).catch(function() {
             window.location.href = '{{ route('calendar', [], false) }}';
         });

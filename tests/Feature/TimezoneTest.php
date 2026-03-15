@@ -19,6 +19,19 @@ test('time in uses configured timezone for date', function () {
     ]);
 });
 
+test('time in uses configured timezone for date via ajax', function () {
+    Setting::set('timezone', 'Asia/Manila');
+
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/clock-in');
+
+    $response->assertOk();
+    $expectedDate = Carbon::now('Asia/Manila')->toDateString();
+    $this->assertDatabaseHas('time_entries', [
+        'date' => $expectedDate,
+    ]);
+});
+
 test('time out uses configured timezone', function () {
     Setting::set('timezone', 'Asia/Manila');
 

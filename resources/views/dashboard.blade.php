@@ -100,11 +100,13 @@ function executeSubmit() {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'text/html'
+            'Accept': 'application/json'
         },
         body: '_token={{ csrf_token() }}'
-    }).then(function() {
-        window.location.href = '{{ route('dashboard', [], false) }}';
+    }).then(function(response) {
+        return response.json();
+    }).then(function(data) {
+        window.location.href = data.redirect || '{{ route('dashboard', [], false) }}';
     }).catch(function() {
         window.location.href = '{{ route('dashboard', [], false) }}';
     });

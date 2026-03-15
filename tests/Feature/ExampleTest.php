@@ -27,6 +27,18 @@ test('user can log time in', function () {
     ]);
 });
 
+test('user can log time in via ajax', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/clock-in');
+
+    $response->assertOk();
+    $response->assertJson([
+        'success' => true,
+        'message' => 'Clocked in successfully.',
+        'redirect' => route('dashboard', [], false),
+    ]);
+});
+
 test('user can log time out', function () {
     $today = Carbon::today()->toDateString();
     $timeIn = Carbon::now()->subHours(4);
@@ -43,6 +55,25 @@ test('user can log time out', function () {
     $entry = TimeEntry::where('date', $today)->first();
     expect($entry->time_out)->not->toBeNull();
     expect($entry->total_minutes)->toBeGreaterThanOrEqual(239);
+});
+
+test('user can log time out via ajax', function () {
+    $today = Carbon::today()->toDateString();
+
+    TimeEntry::create([
+        'date' => $today,
+        'time_in' => Carbon::now()->subHours(2),
+    ]);
+
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/clock-out');
+
+    $response->assertOk();
+    $response->assertJson([
+        'success' => true,
+        'message' => 'Clocked out successfully.',
+        'redirect' => route('dashboard', [], false),
+    ]);
 });
 
 test('calendar page loads correctly', function () {

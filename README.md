@@ -46,6 +46,27 @@ php artisan native:jump
 php artisan test
 ```
 
+## Quality Checks
+
+Run the full local quality pipeline before committing:
+
+```bash
+vendor/bin/pint --test
+php artisan test
+npm run build
+pre-commit run --all-files
+```
+
+## Mobile Performance Optimizations
+
+The app includes additional optimizations focused on reducing interaction latency for both Android and iOS:
+
+- **Reduced database overhead on dashboard:** aggregate totals are computed in a single query and missing-entry detection no longer performs per-day existence queries.
+- **Month-scoped calendar loading:** calendar data queries only fetch entries and journals for the current month instead of scanning all records.
+- **Faster mobile action responses:** clock in, clock out, and journal save endpoints return JSON for fetch-based flows, avoiding redirect-follow plus extra navigation round-trips.
+- **Settings lookup caching:** app settings reads use request-level memory plus persistent cache invalidation on write, reducing repeated database reads in layout and controllers.
+- **Tab prefetching on touch:** bottom navigation prefetches route responses on first touchstart to make tab switches feel more immediate in mobile webviews.
+
 ## Mobile Layout
 
 The app uses `viewport-fit=cover` to render edge-to-edge on mobile devices.

@@ -16,6 +16,24 @@ test('can save a journal entry', function () {
     ]);
 });
 
+test('can save a journal entry via ajax', function () {
+    $date = '2023-10-11';
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson("/journal/{$date}", ['content' => 'Async save.']);
+
+    $response->assertOk();
+    $response->assertJson([
+        'success' => true,
+        'message' => 'Journal saved.',
+        'redirect' => route('calendar', [], false),
+    ]);
+
+    $this->assertDatabaseHas('journals', [
+        'date' => $date,
+        'content' => 'Async save.',
+    ]);
+});
+
 test('can update a journal entry', function () {
     $date = '2023-10-10';
     Journal::create(['date' => $date, 'content' => 'Old content.']);
