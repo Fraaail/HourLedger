@@ -1,0 +1,15 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 12 hashes -->
+    <g stroke="#A1A09A" stroke-width="4" stroke-linecap="round">
+        <line x1="100" y1="20" x2="100" y2="35" />
+        <line x1="100" y1="165" x2="100" y2="180" />
+        <line x1="20" y1="100" x2="35" y2="100" />
+        <line x1="165" y1="100" x2="180" y2="100" />
+        <line x1="43" y1="43" x2="54" y2="54" />
+        <line x1="146" y1="156" x2="157" y2="167" />
+        <line x1="157" y1="43" x2="146" y2="54" />
+        <line x1="54" y1="156" x2="43" y2="167" />
+    </g>
+    <circle cx="100" cy="100" r="45" fill="transparent" stroke="#EDEDEC" stroke-width="8" stroke-dasharray="80 20" />
+    <path d="M100 65 L100 100 L125 100" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

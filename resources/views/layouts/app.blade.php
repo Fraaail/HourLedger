@@ -20,7 +20,10 @@
 <body>
     <div id="app" class="fade-in">
         <header class="app-header">
-            <h1>HourLedger</h1>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <img src="{{ asset('logo.svg') }}" alt="HourLedger Logo" style="width: 28px; height: 28px;" />
+                <h1 style="margin: 0;">HourLedger</h1>
+            </div>
             @if(isset($profiles, $activeProfile))
                 <div class="profile-switcher">
                     <label for="activeProfile" class="profile-switcher-label">Profile</label>

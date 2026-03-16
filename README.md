@@ -1,5 +1,9 @@
 # HourLedger
 
+<p align="center">
+  <img src="public/logo.svg" alt="HourLedger Logo" width="120" />
+</p>
+
 A NativePHP mobile application for tracking internship (OJT) hours. Offline-first, local-only time tracker built with Laravel, Blade, and SQLite.
 
 ## Features
