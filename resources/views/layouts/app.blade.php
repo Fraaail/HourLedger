@@ -21,6 +21,22 @@
     <div id="app" class="fade-in">
         <header class="app-header">
             <h1>HourLedger</h1>
+            @if(isset($profiles, $activeProfile))
+                <div class="profile-switcher">
+                    <label for="activeProfile" class="profile-switcher-label">Profile</label>
+                    <select
+                        id="activeProfile"
+                        class="profile-switcher-select"
+                        onchange="switchActiveProfile(this.value)"
+                    >
+                        @foreach($profiles as $profile)
+                            <option value="{{ $profile->id }}" {{ $activeProfile->id === $profile->id ? 'selected' : '' }}>
+                                {{ $profile->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
         </header>
 
         <main class="app-main">
@@ -90,6 +106,22 @@
             window.addEventListener('theme-changed', (e) => {
                 updateTheme(e.detail.theme);
             });
+
+            window.switchActiveProfile = function(profileId) {
+                fetch('{{ route('profiles.switch', [], false) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: '_token={{ csrf_token() }}&profile_id=' + encodeURIComponent(profileId)
+                }).then(function() {
+                    window.location.reload();
+                }).catch(function() {
+                    window.location.reload();
+                });
+            };
         })();
     </script>
 </body>

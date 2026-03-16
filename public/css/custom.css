@@ -131,6 +131,32 @@ body {
     letter-spacing: -0.5px;
 }
 
+.profile-switcher {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.profile-switcher-label {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-switcher-select {
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 16px;
+}
+
 .app-main {
     flex: 1;
     padding: 1.5rem 1rem calc(5rem + var(--safe-bottom, var(--inset-bottom, 0px))) 1rem;
@@ -417,6 +443,29 @@ body {
     -webkit-appearance: none;
     appearance: none;
     cursor: pointer;
+}
+
+.settings-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+}
+
+.settings-btn {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--accent-color);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 700;
 }
 
 .settings-select:focus {

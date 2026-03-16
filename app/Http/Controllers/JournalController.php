@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Journal;
+use App\Support\ActiveProfile;
 use Illuminate\Http\Request;
 
 class JournalController extends Controller
@@ -11,7 +12,7 @@ class JournalController extends Controller
     {
         $request->validate(['content' => 'nullable|string']);
         Journal::updateOrCreate(
-            ['date' => $date],
+            ['profile_id' => ActiveProfile::id(), 'date' => $date],
             ['content' => $request->input('content')]
         );
 

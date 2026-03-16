@@ -4,6 +4,7 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 
 ## Features
 
+- **Multi-Profile Device Mode** - Use one device for multiple users. Switch active profile from the app header and keep each user's time logs, journals, theme, and timezone separate.
 - **Time In / Time Out** — One-tap clock in and clock out with a beautifully designed custom confirmation modal to avoid misclicks and automatic duration calculation.
 - **Dashboard** — View total rendered hours and days at a glance.
 - **Calendar View** — Monthly grid showing logged days with tap-to-reveal details.
@@ -44,6 +45,12 @@ php artisan native:jump
 
 ```bash
 php artisan test
+
+# Lint/style checks
+./vendor/bin/pint --test
+
+# Pre-commit hooks
+pre-commit run --all-files
 ```
 
 ## Mobile Layout
@@ -77,6 +84,8 @@ The bottom navigation provides access to three views:
 - **Dashboard** — Main view with total rendered time/days and Time In/Out button.
 - **Calendar** — Monthly grid with day-level time details on tap.
 - **Settings** — Theme selection, timezone selection, and current time display.
+
+The header also includes a profile switcher so you can swap users on the same device.
 
 ## Project Documentation
 

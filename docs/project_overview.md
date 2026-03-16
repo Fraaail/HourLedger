@@ -8,6 +8,7 @@ HourLedger is a NativePHP mobile application designed specifically as an offline
 - **Simplicity:** Provide an easy-to-use interface to clock in and clock out daily.
 - **Accuracy:** Track the aggregate hours and days rendered to ensure interns complete their OJT requirement.
 - **Awareness:** Alert interns if they miss entries for previous days.
+- **Shared Device Support:** Let multiple users share one device while keeping records completely isolated by profile.
 - **Professional Aesthetics:** Deliver a pristine setup with support for both Dark and Light schemes using JetBrains Mono.
 
 ## System Architecture
@@ -25,28 +26,39 @@ The architecture represents a self-contained web app running inside a native mob
    - Contains a mobile-only layout with rigid viewport bounds.
    - Powered by standard CSS for layout and animations, adhering to a strict professional palette.
    - Interactivity built strictly with smooth transitions for a dynamic mobile feel.
+   - Includes an always-available profile switcher in the header for fast context switching.
 5. **Font:** JetBrains Mono for system-wide typography.
 
 ## System Flow
 
 1. **Launch:** The app initializes via NativePHP, pointing the webview to the entry route.
 2. **Dashboard Review (Home):**
-   - System checks SQLite database for all entries.
+   - System checks SQLite database for entries tied to the currently active profile.
    - Calculates 'Total Rendered Time' and 'Total Rendered Days' and displays them.
    - Examines past dates dynamically to detect if any weekday is missing a time entry, injecting a native-feeling notification/alert banner at the top if true.
-3. **Action (Time In/Out):**
+3. **Profile Switching:**
+   - User switches profile from the header selector, or creates a new profile in settings.
+   - Active profile is stored in session and all subsequent reads/writes use that profile.
+4. **Action (Time In/Out):**
    - Intern taps the central Call-To-Action (CTA).
    - The app records the current system timestamp in the database and computes the duration if clocking out.
-4. **Calendar View Interaction:**
+5. **Calendar View Interaction:**
    - Intern navigates to the 'Calendar View'.
    - The app displays a monthly grid, highlighting days with logged hours.
    - Tapping a day fetches the specific "Time In" and "Time Out" data via a simple request or preloaded DOM.
 
 ## Data Model (Schema)
 
+**`profiles` Table**
+- `id` (Primary Key)
+- `name` (String, Unique)
+- `is_default` (Boolean)
+- `created_at`, `updated_at` (Timestamps)
+
 **`time_entries` Table**
 - `id` (Primary Key)
-- `date` (Date, Unique)
+- `profile_id` (Foreign-key-like reference to `profiles.id`)
+- `date` (Date, Unique per profile)
 - `time_in` (DateTime, Nullable)
 - `time_out` (DateTime, Nullable)
 - `total_minutes` (Integer, Nullable - computed after time_out)
@@ -54,6 +66,14 @@ The architecture represents a self-contained web app running inside a native mob
 
 **`journals` Table**
 - `id` (Primary Key)
-- `date` (Date, Unique)
+- `profile_id` (Foreign-key-like reference to `profiles.id`)
+- `date` (Date, Unique per profile)
 - `content` (Text, Nullable)
+- `created_at`, `updated_at` (Timestamps)
+
+**`settings` Table**
+- `id` (Primary Key)
+- `profile_id` (Foreign-key-like reference to `profiles.id`)
+- `key` (String, Unique per profile)
+- `value` (String, Nullable)
 - `created_at`, `updated_at` (Timestamps)

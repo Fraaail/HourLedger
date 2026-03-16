@@ -26,6 +26,19 @@
 @endif
 
 <div class="settings-section">
+    <h2 class="settings-heading">Profiles</h2>
+    <p class="settings-description">Create separate profiles so multiple users can use this device independently.</p>
+
+    <form id="profileForm" onsubmit="return createProfile(event)">
+        <div class="settings-field">
+            <label for="profile_name" class="settings-label">New Profile Name</label>
+            <input type="text" name="profile_name" id="profile_name" class="settings-input" maxlength="60" placeholder="e.g. John Doe" required>
+        </div>
+        <button type="submit" class="settings-btn">Create Profile</button>
+    </form>
+</div>
+
+<div class="settings-section">
     <h2 class="settings-heading">Theme</h2>
     <p class="settings-description">Choose your preferred appearance.</p>
 
@@ -121,6 +134,36 @@ function submitTimezone(tz) {
     }).catch(error => {
         console.error('Timezone update failed:', error);
     });
+}
+
+function createProfile(e) {
+    e.preventDefault();
+
+    const input = document.getElementById('profile_name');
+    const name = input.value.trim();
+    if (!name) {
+        return false;
+    }
+
+    fetch('{{ route('profiles.store', [], false) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: '_token={{ csrf_token() }}&name=' + encodeURIComponent(name)
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showStatus(data.message);
+            window.location.reload();
+        }
+    }).catch(error => {
+        console.error('Profile creation failed:', error);
+    });
+
+    return false;
 }
 </script>
 

@@ -14,6 +14,8 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Create a helper to calculate missing entry notifications (check business days without an entry).
 - [x] Implement calendar data endpoint/method to retrieve rendering time by month.
 - [x] Create the `Journal` model, migration, and `JournalController` to handle user journal entries.
+- [x] Implement a profile context system so all time entries, journals, and settings are scoped to the active profile.
+- [x] Add profile switching and profile creation endpoints (`/profiles/switch`, `/profiles`).
 
 ## Phase 3: Frontend Views & Design System
 - [x] Create `layouts/app.blade.php` structure emphasizing a mobile-only viewport.
@@ -29,6 +31,10 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Replace all native HTML form POST submissions with JavaScript `fetch()` to work around iOS WKWebView silently dropping `HTTPBody` on POST requests (known WebKit bug), which caused 404 errors on clock-in, clock-out, settings save, and journal save.
 
 ## Phase 4: Application Features
+- [x] **Multi-Profile Mode:**
+    - [x] Support multiple profiles on one device with independent data per profile.
+    - [x] Add a header profile switcher available from all pages.
+    - [x] Add profile creation in Settings.
 - [x] **Dashboard (Home View):**
     - [x] Display Total Rendered Time & Total Rendered Days dynamically.
     - [x] Show action button (Time In / Time Out) based on current state.
@@ -57,3 +63,4 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Implement CI/CD pipeline for automated testing (GitHub Actions using PHP 8.4).
 - [x] Verify tests pass successfully.
 - [x] Run `pre-commit run --all-files` and fix any issues.
+- [x] Run lint/style checks (`./vendor/bin/pint --test`) and resolve failures.
