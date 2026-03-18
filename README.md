@@ -9,6 +9,8 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 ## Features
 
 - **Multi-Profile Device Mode** - Use one device for multiple users. Switch active profile from the app header and keep each user's time logs, journals, theme, and timezone separate.
+- **Profile Lifecycle Management** - Create, rename, archive, unarchive, and safely delete profiles while protecting the default profile and profiles with recorded data.
+- **Profile Action Overlay** - Create, edit, archive, unarchive, and delete actions use a custom in-app confirmation overlay with clear action styling for safer taps on mobile.
 - **Time In / Time Out** — One-tap clock in and clock out with a beautifully designed custom confirmation modal to avoid misclicks and automatic duration calculation.
 - **Dashboard** — View total rendered hours and days at a glance.
 - **Calendar View** — Monthly grid showing logged days with tap-to-reveal details.
@@ -17,6 +19,7 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 - **Timezone Selection** — Manually select your timezone from settings. Selections are saved asynchronously with dynamic UI updates.
 - **Theme Selector** — Choose between Dark, Light, and System themes. Selections are applied instantly and saved asynchronously without page reloads.
 - **Mobile-Optimized** — JetBrains Mono typography, safe-area-aware layout optimized for both Android and iOS devices.
+- **Persistent Bottom Navigation** — The bottom nav remains fixed and visible at all times with safe-area padding and elevated layering.
 
 ## Tech Stack
 
@@ -53,6 +56,9 @@ php artisan test
 # Lint/style checks
 ./vendor/bin/pint --test
 
+# PHP syntax checks
+pre-commit run php-lint --all-files
+
 # Pre-commit hooks
 pre-commit run --all-files
 ```
@@ -83,10 +89,11 @@ Default fallback values (`0px`) are declared in `:root` so the layout works corr
 
 ## Navigation
 
-The bottom navigation provides access to three views:
+The bottom navigation provides access to four views:
 
 - **Dashboard** — Main view with total rendered time/days and Time In/Out button.
 - **Calendar** — Monthly grid with day-level time details on tap.
+- **Profile** — Dedicated profile management panel for create/edit/archive/unarchive/delete actions.
 - **Settings** — Theme selection, timezone selection, and current time display.
 
 The header also includes a profile switcher so you can swap users on the same device.

@@ -372,8 +372,13 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    z-index: 10;
+    z-index: 120;
     padding-bottom: var(--safe-bottom, var(--inset-bottom, 0px));
+    padding-left: var(--safe-left, var(--inset-left, 0px));
+    padding-right: var(--safe-right, var(--inset-right, 0px));
+    box-shadow: 0 -6px 22px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     /* GPU layer promotion */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
@@ -466,6 +471,76 @@ body {
     font-family: var(--font-mono);
     font-size: 0.9rem;
     font-weight: 700;
+    cursor: pointer;
+}
+
+.profile-management-list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.profile-management-item {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem;
+    background-color: var(--surface-color);
+}
+
+.profile-management-item.is-archived {
+    opacity: 0.8;
+}
+
+.profile-management-main {
+    margin-bottom: 0.5rem;
+}
+
+.profile-name-input {
+    margin-bottom: 0.5rem;
+}
+
+.profile-management-badges {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.profile-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.2rem 0.5rem;
+    color: var(--text-secondary);
+}
+
+.profile-badge.archived {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.profile-management-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+    gap: 0.5rem;
+}
+
+.profile-action-btn {
+    padding: 0.55rem 0.5rem;
+    font-size: 0.78rem;
+}
+
+.profile-action-btn.muted {
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+}
+
+.profile-action-btn.danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
 }
 
 .settings-select:focus {
@@ -504,6 +579,15 @@ body {
 
 .success-notification .notification-title {
     color: var(--success-color);
+}
+
+.error-notification {
+    background-color: rgba(248, 81, 73, 0.1);
+    border-color: var(--danger-color);
+}
+
+.error-notification .notification-title {
+    color: var(--danger-color);
 }
 
 .missing-journal-indicator {
@@ -559,6 +643,33 @@ body {
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     padding: 20px;
+}
+
+.profile-confirmation-modal .modal-content {
+    max-width: 420px;
+    border: 1px solid color-mix(in oklab, var(--accent-color) 35%, var(--border-color));
+    background:
+        radial-gradient(circle at top right, color-mix(in oklab, var(--accent-color) 22%, transparent), transparent 62%),
+        linear-gradient(145deg, color-mix(in oklab, var(--surface-color) 92%, #ffffff), var(--surface-color));
+}
+
+.profile-confirm-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 0.9rem auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color);
+    border: 1px solid color-mix(in oklab, var(--accent-color) 55%, transparent);
+    background-color: color-mix(in oklab, var(--accent-color) 18%, transparent);
+}
+
+.profile-confirm-icon.danger {
+    color: var(--danger-color);
+    border-color: color-mix(in oklab, var(--danger-color) 55%, transparent);
+    background-color: color-mix(in oklab, var(--danger-color) 18%, transparent);
 }
 
 .modal-overlay.visible {

@@ -13,7 +13,9 @@ class ActiveProfile
         $sessionProfileId = self::sessionProfileId();
 
         if ($sessionProfileId !== null) {
-            $profile = Profile::find($sessionProfileId);
+            $profile = Profile::where('id', $sessionProfileId)
+                ->where('is_archived', false)
+                ->first();
             if ($profile) {
                 return $profile;
             }
@@ -32,7 +34,9 @@ class ActiveProfile
 
     public static function set(int $profileId): Profile
     {
-        $profile = Profile::find($profileId) ?? Profile::ensureDefault();
+        $profile = Profile::where('id', $profileId)
+            ->where('is_archived', false)
+            ->first() ?? Profile::ensureDefault();
         self::writeSessionProfileId($profile->id);
 
         return $profile;

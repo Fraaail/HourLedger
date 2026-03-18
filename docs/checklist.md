@@ -34,7 +34,8 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] **Multi-Profile Mode:**
     - [x] Support multiple profiles on one device with independent data per profile.
     - [x] Add a header profile switcher available from all pages.
-    - [x] Add profile creation in Settings.
+    - [x] Add a dedicated Profile navigation panel.
+    - [x] Add profile lifecycle management in Profile (create, rename, archive, unarchive, delete with safety checks).
 - [x] **Dashboard (Home View):**
     - [x] Display Total Rendered Time & Total Rendered Days dynamically.
     - [x] Show action button (Time In / Time Out) based on current state.
@@ -52,6 +53,10 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
     - [x] Timezone-aware timestamps throughout the app (dashboard, calendar, time in/out).
     - [x] All times stored in UTC; converted to user timezone for display only.
     - [x] Settings page accessible from bottom navigation.
+    - [x] Keep bottom navigation always visible with safe-area handling and elevated z-index.
+- [x] **Profile Panel:**
+    - [x] Dedicated Profile panel accessible from bottom navigation.
+    - [x] Custom overlay confirmations for profile create/edit/archive/unarchive/delete actions.
 - [x] **Testing Transitions:** Ensure no glitchy or instant page loads; add subtle fading animations between Dashboard and Calendar.
 
 ## Phase 5: Build & Finalization

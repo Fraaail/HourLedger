@@ -8,7 +8,7 @@
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
-        <span id="statusText">Settings updated.</span>
+        <span id="statusText">Setting updated.</span>
     </div>
 </div>
 
@@ -25,18 +25,14 @@
 <script>setTimeout(() => document.getElementById('sessionNotification')?.remove(), 3000);</script>
 @endif
 
-<div class="settings-section">
-    <h2 class="settings-heading">Profiles</h2>
-    <p class="settings-description">Create separate profiles so multiple users can use this device independently.</p>
-
-    <form id="profileForm" onsubmit="return createProfile(event)">
-        <div class="settings-field">
-            <label for="profile_name" class="settings-label">New Profile Name</label>
-            <input type="text" name="profile_name" id="profile_name" class="settings-input" maxlength="60" placeholder="e.g. John Doe" required>
-        </div>
-        <button type="submit" class="settings-btn">Create Profile</button>
-    </form>
+@if($errors->any())
+<div class="notification" id="errorNotification">
+    <div class="notification-title">
+        <span>{{ $errors->first() }}</span>
+    </div>
 </div>
+<script>setTimeout(() => document.getElementById('errorNotification')?.remove(), 4000);</script>
+@endif
 
 <div class="settings-section">
     <h2 class="settings-heading">Theme</h2>
@@ -80,9 +76,13 @@
 </div>
 
 <script>
-function showStatus(message) {
+function showStatus(message, isError = false) {
     const notify = document.getElementById('statusNotification');
     const text = document.getElementById('statusText');
+
+    notify.classList.toggle('success-notification', !isError);
+    notify.classList.toggle('error-notification', isError);
+
     text.innerText = message;
     notify.style.display = 'block';
     setTimeout(() => notify.style.opacity = '1', 10);
@@ -134,36 +134,6 @@ function submitTimezone(tz) {
     }).catch(error => {
         console.error('Timezone update failed:', error);
     });
-}
-
-function createProfile(e) {
-    e.preventDefault();
-
-    const input = document.getElementById('profile_name');
-    const name = input.value.trim();
-    if (!name) {
-        return false;
-    }
-
-    fetch('{{ route('profiles.store', [], false) }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-        },
-        body: '_token={{ csrf_token() }}&name=' + encodeURIComponent(name)
-    }).then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showStatus(data.message);
-            window.location.reload();
-        }
-    }).catch(error => {
-        console.error('Profile creation failed:', error);
-    });
-
-    return false;
 }
 </script>
 

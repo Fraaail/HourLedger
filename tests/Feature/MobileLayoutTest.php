@@ -66,6 +66,9 @@ test('css bottom nav uses inset-bottom custom property', function () {
     $css = file_get_contents($cssPath);
     expect($css)->toContain('calc(60px + var(--safe-bottom');
     expect($css)->toContain('padding-bottom: var(--safe-bottom');
+    expect($css)->toContain('z-index: 120');
+    expect($css)->toContain('padding-left: var(--safe-left');
+    expect($css)->toContain('padding-right: var(--safe-right');
 });
 
 test('css main content has padding bottom for bottom nav and safe area', function () {

@@ -37,15 +37,23 @@ The architecture represents a self-contained web app running inside a native mob
    - Calculates 'Total Rendered Time' and 'Total Rendered Days' and displays them.
    - Examines past dates dynamically to detect if any weekday is missing a time entry, injecting a native-feeling notification/alert banner at the top if true.
 3. **Profile Switching:**
-   - User switches profile from the header selector, or creates a new profile in settings.
+   - User switches profile from the header selector, or creates a new profile in the dedicated Profile panel.
    - Active profile is stored in session and all subsequent reads/writes use that profile.
-4. **Action (Time In/Out):**
+4. **Profile Management:**
+   - User can create, rename, archive, unarchive, and delete profiles from the Profile panel.
+   - Archived profiles are excluded from the active switcher and cannot be selected.
+   - Profile deletion is allowed only for non-default profiles with no linked records.
+   - Profile create/edit/archive/unarchive/delete actions use an in-app confirmation overlay to reduce accidental taps.
+5. **Action (Time In/Out):**
    - Intern taps the central Call-To-Action (CTA).
    - The app records the current system timestamp in the database and computes the duration if clocking out.
-5. **Calendar View Interaction:**
+6. **Calendar View Interaction:**
    - Intern navigates to the 'Calendar View'.
    - The app displays a monthly grid, highlighting days with logged hours.
    - Tapping a day fetches the specific "Time In" and "Time Out" data via a simple request or preloaded DOM.
+7. **Navigation Persistence:**
+   - Bottom navigation stays fixed and visible across views and scroll states.
+   - Safe-area insets are applied so nav controls remain accessible on both Android and iOS.
 
 ## Data Model (Schema)
 
@@ -53,6 +61,7 @@ The architecture represents a self-contained web app running inside a native mob
 - `id` (Primary Key)
 - `name` (String, Unique)
 - `is_default` (Boolean)
+- `is_archived` (Boolean)
 - `created_at`, `updated_at` (Timestamps)
 
 **`time_entries` Table**

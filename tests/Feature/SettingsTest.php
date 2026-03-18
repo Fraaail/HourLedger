@@ -8,6 +8,7 @@ test('settings page loads correctly', function () {
     $response->assertStatus(200);
     $response->assertSee('Timezone', false);
     $response->assertSee('Theme', false);
+    $response->assertDontSee('New Profile Name', false);
 });
 
 test('settings page displays timezone selector', function () {
@@ -78,6 +79,8 @@ test('settings nav link appears in layout', function () {
     $response->assertStatus(200);
     $response->assertSee('Settings', false);
     $response->assertSee(route('settings', [], false), false);
+    $response->assertSee('Profile', false);
+    $response->assertSee(route('profiles.index', [], false), false);
 });
 
 test('user can update theme', function () {
@@ -147,4 +150,11 @@ test('settings page does not have manual save buttons', function () {
     $response->assertStatus(200);
     $response->assertDontSee('Save Theme', false);
     $response->assertDontSee('Save Timezone', false);
+});
+
+test('settings page does not include profile confirmation overlay', function () {
+    $response = $this->get('/settings');
+    $response->assertStatus(200);
+    $response->assertDontSee('id="profileConfirmOverlay"', false);
+    $response->assertDontSee('profile-confirmation-modal', false);
 });
