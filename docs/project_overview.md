@@ -42,7 +42,7 @@ The architecture represents a self-contained web app running inside a native mob
 4. **Profile Management:**
    - User can create, rename, archive, unarchive, and delete profiles from the Profile panel.
    - Archived profiles are excluded from the active switcher and cannot be selected.
-   - Profile deletion is allowed only for non-default profiles with no linked records.
+   - Profile deletion is allowed only for non-default, non-active profiles; deleting a profile removes all records scoped to that profile.
    - Profile create/edit/archive/unarchive/delete actions use an in-app confirmation overlay to reduce accidental taps.
 5. **Action (Time In/Out):**
    - Intern taps the central Call-To-Action (CTA).

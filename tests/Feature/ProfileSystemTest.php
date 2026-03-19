@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\AttendanceLog;
 use App\Models\Journal;
 use App\Models\Profile;
+use App\Models\Setting;
 use App\Models\TimeEntry;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 
@@ -182,26 +184,65 @@ test('empty non-active profile can be deleted', function () {
     ]);
 });
 
-test('profile with data cannot be deleted', function () {
+test('profile with data can be deleted and removes its scoped records', function () {
     $defaultProfile = Profile::where('is_default', true)->firstOrFail();
     $profile = Profile::create(['name' => 'Has Data']);
+    $today = now()->toDateString();
 
     TimeEntry::create([
         'profile_id' => $profile->id,
-        'date' => now()->toDateString(),
+        'date' => $today,
+        'time_in' => now(),
+    ]);
+
+    Journal::create([
+        'profile_id' => $profile->id,
+        'date' => $today,
+        'content' => 'Temporary journal entry',
+    ]);
+
+    Setting::create([
+        'profile_id' => $profile->id,
+        'key' => 'theme',
+        'value' => 'dark',
+    ]);
+
+    AttendanceLog::create([
+        'profile_id' => $profile->id,
+        'date' => $today,
         'time_in' => now(),
     ]);
 
     $this->withSession(['active_profile_id' => $defaultProfile->id])
         ->withoutMiddleware(ValidateCsrfToken::class)
         ->deleteJson('/profiles/'.$profile->id)
-        ->assertStatus(422)
+        ->assertOk()
         ->assertJson([
-            'success' => false,
-            'message' => 'This profile has records. Archive it instead of deleting it.',
+            'success' => true,
+            'message' => 'Profile deleted.',
         ]);
 
-    $this->assertDatabaseHas('profiles', [
+    $this->assertDatabaseMissing('profiles', [
         'id' => $profile->id,
+    ]);
+
+    $this->assertDatabaseMissing('time_entries', [
+        'profile_id' => $profile->id,
+        'date' => $today,
+    ]);
+
+    $this->assertDatabaseMissing('journals', [
+        'profile_id' => $profile->id,
+        'date' => $today,
+    ]);
+
+    $this->assertDatabaseMissing('settings', [
+        'profile_id' => $profile->id,
+        'key' => 'theme',
+    ]);
+
+    $this->assertDatabaseMissing('attendance_logs', [
+        'profile_id' => $profile->id,
+        'date' => $today,
     ]);
 });

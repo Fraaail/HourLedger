@@ -9,7 +9,7 @@ A NativePHP mobile application for tracking internship (OJT) hours. Offline-firs
 ## Features
 
 - **Multi-Profile Device Mode** - Use one device for multiple users. Switch active profile from the app header and keep each user's time logs, journals, theme, and timezone separate.
-- **Profile Lifecycle Management** - Create, rename, archive, unarchive, and safely delete profiles while protecting the default profile and profiles with recorded data.
+- **Profile Lifecycle Management** - Create, rename, archive, unarchive, and safely delete profiles while protecting the default/active profile; deleting a profile also removes that profile's scoped records.
 - **Profile Action Overlay** - Create, edit, archive, unarchive, and delete actions use a custom in-app confirmation overlay with clear action styling for safer taps on mobile.
 - **Time In / Time Out** — One-tap clock in and clock out with a beautifully designed custom confirmation modal to avoid misclicks and automatic duration calculation.
 - **Dashboard** — View total rendered hours and days at a glance.

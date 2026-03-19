@@ -35,7 +35,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
     - [x] Support multiple profiles on one device with independent data per profile.
     - [x] Add a header profile switcher available from all pages.
     - [x] Add a dedicated Profile navigation panel.
-    - [x] Add profile lifecycle management in Profile (create, rename, archive, unarchive, delete with safety checks).
+    - [x] Add profile lifecycle management in Profile (create, rename, archive, unarchive, delete with safety checks, including scoped data cleanup on delete).
 - [x] **Dashboard (Home View):**
     - [x] Display Total Rendered Time & Total Rendered Days dynamically.
     - [x] Show action button (Time In / Time Out) based on current state.

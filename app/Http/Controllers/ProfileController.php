@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Models\TimeEntry;
 use App\Support\ActiveProfile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -126,11 +127,10 @@ class ProfileController extends Controller
             return $this->profileActionError($request, 'Switch to another profile before deleting this one.');
         }
 
-        if ($this->profileHasData($profile->id)) {
-            return $this->profileActionError($request, 'This profile has records. Archive it instead of deleting it.');
-        }
-
-        $profile->delete();
+        DB::transaction(function () use ($profile): void {
+            $this->deleteProfileData($profile->id);
+            $profile->delete();
+        });
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -163,12 +163,12 @@ class ProfileController extends Controller
         return redirect()->route('profiles.index')->with('success', 'Profile unarchived.');
     }
 
-    private function profileHasData(int $profileId): bool
+    private function deleteProfileData(int $profileId): void
     {
-        return TimeEntry::where('profile_id', $profileId)->exists()
-            || Journal::where('profile_id', $profileId)->exists()
-            || Setting::where('profile_id', $profileId)->exists()
-            || AttendanceLog::where('profile_id', $profileId)->exists();
+        TimeEntry::where('profile_id', $profileId)->delete();
+        Journal::where('profile_id', $profileId)->delete();
+        Setting::where('profile_id', $profileId)->delete();
+        AttendanceLog::where('profile_id', $profileId)->delete();
     }
 
     private function profileActionError(Request $request, string $message)
