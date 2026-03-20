@@ -57,6 +57,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] **Profile Panel:**
     - [x] Dedicated Profile panel accessible from bottom navigation.
     - [x] Custom overlay confirmations for profile create/edit/archive/unarchive/delete actions.
+    - [x] Persistent **"View All Profiles"** toggle to hide the profile management list by default for a cleaner UI.
 - [x] **Testing Transitions:** Ensure no glitchy or instant page loads; add subtle fading animations between Dashboard and Calendar.
 
 ## Phase 5: Build & Finalization

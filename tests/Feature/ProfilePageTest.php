@@ -7,6 +7,8 @@ test('profiles page loads correctly', function () {
     $response->assertSee('Profiles', false);
     $response->assertSee('New Profile Name', false);
     $response->assertSee('Create Profile', false);
+    $response->assertSee('View All Profiles', false);
+    $response->assertSee('profile-management-list hidden', false);
 });
 
 test('profiles page includes profile confirmation overlay', function () {

@@ -46,7 +46,14 @@
         <button type="submit" class="settings-btn">Create Profile</button>
     </form>
 
-    <div class="profile-management-list">
+    <button type="button" class="view-all-profiles-btn" id="toggleProfilesBtn" onclick="toggleProfileList()">
+        <span>View All Profiles</span>
+        <svg id="toggleIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;">
+            <path d="M6 9l6 6 6-6"></path>
+        </svg>
+    </button>
+
+    <div class="profile-management-list hidden" id="profileManagementList">
         @foreach($managedProfiles as $profile)
             <div class="profile-management-item {{ $profile->is_archived ? 'is-archived' : '' }}">
                 <div class="profile-management-main">
@@ -195,6 +202,23 @@ function sendProfileRequest(url, method, body) {
 
         return data;
     });
+}
+
+function toggleProfileList() {
+    const list = document.getElementById('profileManagementList');
+    const btn = document.getElementById('toggleProfilesBtn');
+    const icon = document.getElementById('toggleIcon');
+    const text = btn.querySelector('span');
+
+    const isHidden = list.classList.toggle('hidden');
+
+    if (isHidden) {
+        text.innerText = 'View All Profiles';
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        text.innerText = 'Hide All Profiles';
+        icon.style.transform = 'rotate(180deg)';
+    }
 }
 
 function createProfile(e) {

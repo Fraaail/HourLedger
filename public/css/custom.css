@@ -481,6 +481,34 @@ body {
     gap: 0.75rem;
 }
 
+.profile-management-list.hidden {
+    display: none;
+}
+
+.view-all-profiles-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.2s;
+}
+
+.view-all-profiles-btn:active {
+    transform: scale(0.98);
+    background-color: var(--border-color);
+}
+
 .profile-management-item {
     border: 1px solid var(--border-color);
     border-radius: 10px;
