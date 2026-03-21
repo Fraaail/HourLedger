@@ -97,7 +97,7 @@ The bottom navigation provides access to four views:
 - **Profile** — Dedicated profile management panel for create/edit/archive/unarchive/delete actions.
 - **Settings** — Theme selection, timezone selection, and current time display.
 
-The header also includes a profile switcher so you can swap users on the same device.
+The header also includes a profile switcher via a custom animated bottom-sheet so you can easily swap users on the same device with a native-like professional feel.
 
 ## Project Documentation
 

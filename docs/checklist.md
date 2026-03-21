@@ -34,6 +34,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] **Multi-Profile Mode:**
     - [x] Support multiple profiles on one device with independent data per profile.
     - [x] Add a header profile switcher available from all pages.
+    - [x] Replace native select profile switcher with a professional custom bottom-sheet modal overlay.
     - [x] Add a dedicated Profile navigation panel.
     - [x] Add profile lifecycle management in Profile (create, rename, archive, unarchive, delete with safety checks, including scoped data cleanup on delete).
 - [x] **Dashboard (Home View):**

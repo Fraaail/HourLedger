@@ -25,19 +25,16 @@
                 <h1 style="margin: 0;">HourLedger</h1>
             </div>
             @if(isset($profiles, $activeProfile))
-                <div class="profile-switcher">
-                    <label for="activeProfile" class="profile-switcher-label">Profile</label>
-                    <select
-                        id="activeProfile"
-                        class="profile-switcher-select"
-                        onchange="switchActiveProfile(this.value)"
-                    >
-                        @foreach($profiles as $profile)
-                            <option value="{{ $profile->id }}" {{ $activeProfile->id === $profile->id ? 'selected' : '' }}>
-                                {{ $profile->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
+                    <button type="button" class="profile-header-btn" onclick="openProfileSwitcher()">
+                        <div class="profile-header-avatar">
+                            {{ strtoupper(substr($activeProfile->name, 0, 1)) }}
+                        </div>
+                        <span class="profile-header-name">{{ $activeProfile->name }}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
                 </div>
             @endif
         </header>
@@ -87,6 +84,32 @@
                 <span>Settings</span>
             </a>
         </nav>
+
+        @if(isset($profiles, $activeProfile))
+        <div class="modal-overlay profile-switcher-sheet" id="profileSwitcherModal" onclick="if(event.target===this) closeProfileSwitcher()">
+            <div class="modal-content">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title" style="text-align: left; margin-bottom: 0.25rem;">Switch Profile</h3>
+                <p class="modal-body" style="text-align: left; margin-bottom: 1.5rem;">Select an active profile.</p>
+                <div class="profile-list-container">
+                    @foreach($profiles as $profile)
+                        <button type="button" class="profile-list-btn {{ $activeProfile->id === $profile->id ? 'active' : '' }}" onclick="switchActiveProfile('{{ $profile->id }}')">
+                            <div class="profile-list-avatar">
+                                {{ strtoupper(substr($profile->name, 0, 1)) }}
+                            </div>
+                            <span class="profile-list-name">{{ $profile->name }}</span>
+                            @if($activeProfile->id === $profile->id)
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            @endif
+                        </button>
+                    @endforeach
+                </div>
+                <button type="button" class="btn-modal cancel" style="margin-top: 1rem; width: 100%;" onclick="closeProfileSwitcher()">Cancel</button>
+            </div>
+        </div>
+        @endif
     </div>
     <script>
         (function() {
@@ -118,6 +141,14 @@
             window.addEventListener('theme-changed', (e) => {
                 updateTheme(e.detail.theme);
             });
+
+            window.openProfileSwitcher = function() {
+                document.getElementById('profileSwitcherModal').classList.add('visible');
+            };
+
+            window.closeProfileSwitcher = function() {
+                document.getElementById('profileSwitcherModal').classList.remove('visible');
+            };
 
             window.switchActiveProfile = function(profileId) {
                 fetch('{{ route('profiles.switch', [], false) }}', {
