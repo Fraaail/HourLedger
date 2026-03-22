@@ -71,3 +71,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Verify tests pass successfully.
 - [x] Run `pre-commit run --all-files` and fix any issues.
 - [x] Run lint/style checks (`./vendor/bin/pint --test`) and resolve failures.
+
+## Phase 6: Mobile Platform Optimization & Recommendations
+- [x] Research and document platform-specific feature recommendations for Android and iOS (biometrics, widgets, notifications, etc.) in `docs/recommendations.md`.
+- [x] Link mobile recommendations to the main project documentation.
