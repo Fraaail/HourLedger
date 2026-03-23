@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Profile extends Model
 {
-    protected $fillable = ['name', 'is_default', 'is_archived'];
+    protected $fillable = ['name', 'is_default', 'is_archived', 'biometric_auth'];
 
     protected $casts = [
         'is_default' => 'boolean',
         'is_archived' => 'boolean',
+        'biometric_auth' => 'boolean',
     ];
 
     public static function ensureDefault(): self

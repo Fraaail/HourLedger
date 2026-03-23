@@ -52,7 +52,27 @@ class ProfileController extends Controller
             'profile_id' => ['required', 'integer'],
         ]);
 
-        $profile = ActiveProfile::set((int) $payload['profile_id']);
+        $profile = Profile::findOrFail((int) $payload['profile_id']);
+
+        if ($profile->biometric_auth && \Native\Mobile\Facades\System::isMobile()) {
+            $lastBiometricId = 'switch-profile-' . $profile->id;
+
+            if (!session('_native_biometric_success_' . $lastBiometricId)) {
+                \Native\Mobile\Facades\Biometrics::prompt()
+                    ->id($lastBiometricId)
+                    ->remember()
+                    ->prompt();
+
+                return response()->json([
+                    'success' => true,
+                    'requires_biometrics' => true,
+                    'biometric_id' => $lastBiometricId,
+                    'profile_id' => $profile->id,
+                ]);
+            }
+        }
+
+        ActiveProfile::set($profile->id);
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -69,10 +89,12 @@ class ProfileController extends Controller
     {
         $payload = $request->validate([
             'name' => ['required', 'string', 'max:60', Rule::unique('profiles', 'name')->ignore($profile->id)],
+            'biometric_auth' => ['nullable', 'boolean'],
         ]);
 
         $profile->update([
             'name' => trim($payload['name']),
+            'biometric_auth' => $request->boolean('biometric_auth'),
         ]);
 
         if ($request->expectsJson()) {

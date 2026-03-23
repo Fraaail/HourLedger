@@ -299,7 +299,7 @@ return [
     */
 
     'permissions' => [
-        //
+        'biometrics' => 'We need biometric access to secure your profile logs.',
     ],
 
     /*

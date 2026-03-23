@@ -159,7 +159,24 @@
                         'Accept': 'application/json'
                     },
                     body: '_token={{ csrf_token() }}&profile_id=' + encodeURIComponent(profileId)
-                }).then(function() {
+                }).then(async function(response) {
+                    const data = await response.json();
+                    if (data.requires_biometrics) {
+                        // The controller triggered the prompt. Now we wait for the native event.
+                        const handler = function(e) {
+                            if (e.detail.id === data.biometric_id) {
+                                window.removeEventListener('nativephp:Native\\Mobile\\Events\\Biometric\\Completed', handler);
+                                if (e.detail.success) {
+                                    // Successfully authenticated, retry the switch
+                                    switchActiveProfile(profileId);
+                                } else {
+                                    closeProfileSwitcher();
+                                }
+                            }
+                        };
+                        window.addEventListener('nativephp:Native\\Mobile\\Events\\Biometric\\Completed', handler);
+                        return;
+                    }
                     window.location.reload();
                 }).catch(function() {
                     window.location.reload();

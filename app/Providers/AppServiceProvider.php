@@ -23,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Event::listen(
+            \Native\Mobile\Events\Biometric\Completed::class,
+            \App\Listeners\HandleBiometricCompletion::class
+        );
+
         View::composer('layouts.app', function ($view): void {
             if (! Schema::hasTable('profiles')) {
                 return;

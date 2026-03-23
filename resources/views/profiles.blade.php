@@ -77,6 +77,20 @@
                     </div>
                 </div>
 
+                @if(\Native\Mobile\Facades\System::isMobile())
+                <div class="profile-management-settings" style="margin-top: 0.75rem; padding: 0.75rem; border-radius: 0.75rem; background: var(--bg-secondary);">
+                    <label class="toggle-container" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; width: 100%;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <span class="settings-label" style="margin-bottom: 0;">Biometric Authentication</span>
+                        </div>
+                        <input type="checkbox" id="biometric_auth_{{ $profile->id }}" {{ $profile->biometric_auth ? 'checked' : '' }} style="width: 1.25rem; height: 1.25rem;">
+                    </label>
+                </div>
+                @endif
+
                 <div class="profile-management-actions">
                     <button type="button" class="settings-btn profile-action-btn" onclick="updateProfile({{ $profile->id }})">
                         Save
@@ -273,6 +287,9 @@ function updateProfile(profileId) {
         return;
     }
 
+    const biometricCheckbox = document.getElementById('biometric_auth_' + profileId);
+    const biometricAuth = biometricCheckbox ? (biometricCheckbox.checked ? '1' : '0') : '0';
+
     openProfileConfirm({
         title: 'Save Profile Changes',
         body: 'Save this profile as "' + name + '"?',
@@ -281,7 +298,7 @@ function updateProfile(profileId) {
             sendProfileRequest(
                 buildProfileUrl(profileUpdateUrlTemplate, profileId),
                 'POST',
-                '_token={{ csrf_token() }}&_method=PATCH&name=' + encodeURIComponent(name)
+                '_token={{ csrf_token() }}&_method=PATCH&name=' + encodeURIComponent(name) + '&biometric_auth=' + biometricAuth
             ).then(data => {
                 showStatus(data.message);
                 window.location.reload();
