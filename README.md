@@ -104,7 +104,7 @@ The header also includes a profile switcher via a custom animated bottom-sheet s
 
 - [Project Overview](docs/project_overview.md)
 - [Implementation Checklist](docs/checklist.md)
-- [Mobile Recommendations](docs/recommendations.md)
+- [Mobile Recommendations](docs/improvements.md)
 
 ## License
 

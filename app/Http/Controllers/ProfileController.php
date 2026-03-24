@@ -11,6 +11,8 @@ use App\Support\ActiveProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Native\Mobile\Facades\Biometrics;
+use Native\Mobile\Facades\System;
 
 class ProfileController extends Controller
 {
@@ -54,11 +56,11 @@ class ProfileController extends Controller
 
         $profile = Profile::findOrFail((int) $payload['profile_id']);
 
-        if ($profile->biometric_auth && \Native\Mobile\Facades\System::isMobile()) {
-            $lastBiometricId = 'switch-profile-' . $profile->id;
+        if ($profile->biometric_auth && System::isMobile()) {
+            $lastBiometricId = 'switch-profile-'.$profile->id;
 
-            if (!session('_native_biometric_success_' . $lastBiometricId)) {
-                \Native\Mobile\Facades\Biometrics::prompt()
+            if (! session('_native_biometric_success_'.$lastBiometricId)) {
+                Biometrics::prompt()
                     ->id($lastBiometricId)
                     ->remember()
                     ->prompt();

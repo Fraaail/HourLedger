@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Listeners\HandleBiometricCompletion;
 use App\Models\Profile;
 use App\Support\ActiveProfile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Native\Mobile\Events\Biometric\Completed;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,9 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\Event::listen(
-            \Native\Mobile\Events\Biometric\Completed::class,
-            \App\Listeners\HandleBiometricCompletion::class
+        Event::listen(
+            Completed::class,
+            HandleBiometricCompletion::class
         );
 
         View::composer('layouts.app', function ($view): void {

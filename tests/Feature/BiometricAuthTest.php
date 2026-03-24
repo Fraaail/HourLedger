@@ -34,11 +34,11 @@ test('switching to a profile with biometric auth after successful validation wor
         'biometric_auth' => true,
     ]);
 
-    $biometricId = 'switch-profile-' . $profile->id;
+    $biometricId = 'switch-profile-'.$profile->id;
 
     System::shouldReceive('isMobile')->andReturn(true);
 
-    $this->withSession(['_native_biometric_success_' . $biometricId => true])
+    $this->withSession(['_native_biometric_success_'.$biometricId => true])
         ->withoutMiddleware(ValidateCsrfToken::class)
         ->postJson('/profiles/switch', ['profile_id' => $profile->id])
         ->assertOk()
