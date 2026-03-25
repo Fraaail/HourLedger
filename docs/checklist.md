@@ -76,3 +76,4 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Research and document platform-specific feature recommendations for Android and iOS (biometrics, widgets, notifications, etc.) in `docs/improvements.md`.
 - [x] Link mobile recommendations to the main project documentation.
 - [x] Implement Biometric Authentication for profile access on Android and iOS using NativePHP's bridge.
+- [x] Implement Home Screen Widgets on Android (small and medium) with bridge-driven data sync from dashboard stats.

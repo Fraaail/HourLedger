@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AndroidPHP</string>
+    <string name="widget_description">HourLedger quick summary widget</string>
+    <string name="widget_total_hours_value">Hours: %1$s</string>
+    <string name="widget_total_days_value">Days: %1$s</string>
+    <string name="widget_clocked_in_value">In at: %1$s</string>
+</resources>

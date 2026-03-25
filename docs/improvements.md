@@ -9,10 +9,10 @@ This document outlines recommended features and optimizations to enhance the Hou
     - **Benefit:** Provides a secure way for multiple users to protect their individual logs on a shared device without needing complex passwords.
     - **Implementation:** Utilize NativePHP's bridge to access device keychain and local authentication APIs.
 
-- [ ] **Home Screen Widgets**
+- [x] **Home Screen Widgets (Android)**
     - **Recommendation:** Create small and medium widgets for the home screen.
     - **Benefit:** Allows users to see their "Total Hours" and "Current Status" (Clocked In/Out) without opening the app.
-    - **Implementation:** Requires platform-specific widget code (SwiftUI for iOS, RemoteViews for Android) bridged via NativePHP.
+    - **Implementation:** Added Android `AppWidgetProvider` + RemoteViews (small/medium adaptive layouts), plus dashboard-to-native bridge sync and a Laravel widget summary endpoint for profile-scoped values. iOS widget implementation remains pending until iOS native target scaffolding is added.
 
 - [ ] **App Shortcuts / Quick Actions**
     - **Recommendation:** Implement "Quick Actions" (iOS) and "App Shortcuts" (Android) on the app icon.

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Journal;
+use App\Models\Profile;
 use App\Models\Setting;
 use App\Models\TimeEntry;
 use App\Support\ActiveProfile;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TimeEntryController extends Controller
 {
@@ -70,6 +73,54 @@ class TimeEntryController extends Controller
         $journals = Journal::where('profile_id', $profileId)->get()->keyBy('date');
 
         return view('calendar', compact('entries', 'journals', 'tz'));
+    }
+
+    public function widgetSummary(Request $request): JsonResponse
+    {
+        $requestedProfileId = (int) $request->query('profile_id', 0);
+
+        $profile = $requestedProfileId > 0
+            ? Profile::where('id', $requestedProfileId)->where('is_archived', false)->first()
+            : null;
+
+        if (! $profile) {
+            $profile = ActiveProfile::current();
+        }
+
+        return response()->json($this->buildWidgetSummary($profile->id, $profile->name));
+    }
+
+    private function buildWidgetSummary(int $profileId, string $profileName): array
+    {
+        $timezone = Setting::where('profile_id', $profileId)
+            ->where('key', 'timezone')
+            ->value('value') ?? config('app.timezone');
+
+        $today = Carbon::now($timezone)->toDateString();
+        $entryToday = TimeEntry::where('profile_id', $profileId)
+            ->where('date', $today)
+            ->first();
+
+        $totalMinutes = (int) TimeEntry::where('profile_id', $profileId)->sum('total_minutes');
+        $totalDays = TimeEntry::where('profile_id', $profileId)->whereNotNull('time_out')->count();
+
+        $status = ($entryToday && $entryToday->time_in && ! $entryToday->time_out)
+            ? 'clocked_in'
+            : 'clocked_out';
+
+        return [
+            'profile_id' => $profileId,
+            'profile_name' => $profileName,
+            'status' => $status,
+            'status_label' => $status === 'clocked_in' ? 'Clocked In' : 'Clocked Out',
+            'total_minutes' => $totalMinutes,
+            'total_hours' => round($totalMinutes / 60, 1),
+            'total_days' => $totalDays,
+            'clocked_in_at' => $entryToday?->time_in?->timezone($timezone)->format('h:i A'),
+            'clocked_out_at' => $entryToday?->time_out?->timezone($timezone)->format('h:i A'),
+            'timezone' => $timezone,
+            'updated_at' => Carbon::now()->toIso8601String(),
+        ];
     }
 
     private function getMissingEntries()

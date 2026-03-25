@@ -67,6 +67,28 @@
 <script>
 let currentUrl = '';
 
+const widgetPayload = {
+    profile_name: @json(\App\Support\ActiveProfile::current()->name),
+    status: @json(($entryToday && $entryToday->time_in && !$entryToday->time_out) ? 'clocked_in' : 'clocked_out'),
+    status_label: @json(($entryToday && $entryToday->time_in && !$entryToday->time_out) ? 'Clocked In' : 'Clocked Out'),
+    total_hours: @json(round($totalMinutes / 60, 1)),
+    total_days: @json($totalDays),
+    clocked_in_at: @json($entryToday?->time_in ? $entryToday->time_in->timezone($tz)->format('h:i A') : null),
+    updated_at: @json(now()->toIso8601String())
+};
+
+function syncHomeWidget() {
+    if (window.AndroidBridge && typeof window.AndroidBridge.syncHomeWidget === 'function') {
+        window.AndroidBridge.syncHomeWidget(JSON.stringify(widgetPayload));
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncHomeWidget);
+} else {
+    syncHomeWidget();
+}
+
 function submitClock(url) {
     currentUrl = url;
     const isClockIn = url.indexOf('clock-in') !== -1;
