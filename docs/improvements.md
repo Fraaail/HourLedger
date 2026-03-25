@@ -14,10 +14,10 @@ This document outlines recommended features and optimizations to enhance the Hou
     - **Benefit:** Allows users to see their "Total Hours" and "Current Status" (Clocked In/Out) without opening the app.
     - **Implementation:** Added Android `AppWidgetProvider` + RemoteViews (small/medium adaptive layouts), plus dashboard-to-native bridge sync and a Laravel widget summary endpoint for profile-scoped values. iOS widget implementation remains pending until iOS native target scaffolding is added.
 
-- [ ] **App Shortcuts / Quick Actions**
+- [x] **App Shortcuts / Quick Actions**
     - **Recommendation:** Implement "Quick Actions" (iOS) and "App Shortcuts" (Android) on the app icon.
     - **Benefit:** Enables users to "Clock In" or "Clock Out" directly from the home screen with a long-press.
-    - **Implementation:** Configure static or dynamic shortcuts in the native manifest/plist via the NativePHP wrapper.
+    - **Implementation:** Android `shortcuts.xml` and Manifest meta-data added utilizing existing NativePHP deep link intent capture mechanisms. iOS Quick Actions implementation remains pending until iOS native target scaffolding is added.
 
 ## 2. Notifications & Engagement
 

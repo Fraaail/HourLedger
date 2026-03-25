@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [TimeEntryController::class, 'index'])->name('dashboard');
 Route::post('/clock-in', [TimeEntryController::class, 'timeIn'])->name('time.in');
 Route::post('/clock-out', [TimeEntryController::class, 'timeOut'])->name('time.out');
+Route::get('/shortcut/clock-in', [TimeEntryController::class, 'timeIn'])->name('shortcut.time.in');
+Route::get('/shortcut/clock-out', [TimeEntryController::class, 'timeOut'])->name('shortcut.time.out');
 Route::get('/calendar', [TimeEntryController::class, 'calendar'])->name('calendar');
 Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.index');
 Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
