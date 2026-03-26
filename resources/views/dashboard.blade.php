@@ -83,10 +83,27 @@ function syncHomeWidget() {
     }
 }
 
+function syncMissingEntriesReminder() {
+    if (window.AndroidBridge && typeof window.AndroidBridge.syncMissingEntriesReminder === 'function') {
+        window.AndroidBridge.syncMissingEntriesReminder(JSON.stringify({
+            enabled: @json(\App\Models\Setting::get('missing_entries_reminder_enabled', '1') === '1'),
+            timezone: @json($tz),
+            profile_name: @json(\App\Support\ActiveProfile::current()->name),
+            hour: 9,
+            minute: 0,
+            skip_today: @json((bool) ($entryToday?->time_in)),
+        }));
+    }
+}
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', syncHomeWidget);
+    document.addEventListener('DOMContentLoaded', function() {
+        syncHomeWidget();
+        syncMissingEntriesReminder();
+    });
 } else {
     syncHomeWidget();
+    syncMissingEntriesReminder();
 }
 
 function submitClock(url) {

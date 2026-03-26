@@ -21,10 +21,10 @@ This document outlines recommended features and optimizations to enhance the Hou
 
 ## 2. Notifications & Engagement
 
-- [ ] **Push Notifications for Missing Entries**
+- [x] **Push Notifications for Missing Entries**
     - **Recommendation:** Implement local notifications to alert users if they haven't clocked in by a certain time on weekdays.
     - **Benefit:** Improves data accuracy by reducing "forgotten" entries.
-    - **Implementation:** Schedule local notifications using NativePHP's notification API based on the user's timezone settings.
+    - **Implementation:** Added Android local reminder scheduling through a native bridge (`syncMissingEntriesReminder`) with timezone-aware weekday alarms, a profile-scoped settings toggle, and runtime notification permission support. Current implementation re-schedules to the next weekday at 9:00 AM and updates schedule state from Dashboard/Settings interactions.
 
 - [ ] **Critical Alerts (iOS)**
     - **Recommendation:** Use iOS Critical Alerts for end-of-day reminders if hours are significantly under the requirement.

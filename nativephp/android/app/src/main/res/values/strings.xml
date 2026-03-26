@@ -4,4 +4,8 @@
     <string name="widget_total_hours_value">Hours: %1$s</string>
     <string name="widget_total_days_value">Days: %1$s</string>
     <string name="widget_clocked_in_value">In at: %1$s</string>
+    <string name="missing_entries_channel_name">Missing Entry Reminders</string>
+    <string name="missing_entries_channel_description">Weekday reminders when no time-in has been recorded yet</string>
+    <string name="missing_entries_notification_title">Missing Time Entry</string>
+    <string name="missing_entries_notification_body">%1$s has no clock-in yet for today. Open HourLedger to record your time.</string>
 </resources>

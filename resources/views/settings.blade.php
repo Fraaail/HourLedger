@@ -67,6 +67,27 @@
 </div>
 
 <div class="settings-section">
+    <h2 class="settings-heading">Missing Entry Reminders</h2>
+    <p class="settings-description">Send a weekday local reminder at 9:00 AM if you have not clocked in for today.</p>
+
+    <form id="missingEntriesReminderForm">
+        <div class="settings-field" style="padding: 0.75rem; border-radius: 0.75rem; background: var(--bg-secondary);">
+            <label for="missing_entries_reminder_enabled" class="toggle-container" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; width: 100%;">
+                <span class="settings-label" style="margin-bottom: 0;">Enable Missing Entry Reminder</span>
+                <input
+                    type="checkbox"
+                    name="missing_entries_reminder_enabled"
+                    id="missing_entries_reminder_enabled"
+                    style="width: 1.25rem; height: 1.25rem;"
+                    {{ $missingEntriesReminderEnabled ? 'checked' : '' }}
+                    onchange="submitMissingEntriesReminder(this.checked)"
+                >
+            </label>
+        </div>
+    </form>
+</div>
+
+<div class="settings-section">
     <h2 class="settings-heading">Current Time</h2>
     <p class="settings-description">Based on your selected timezone.</p>
     <div class="metric-card" style="margin-top: 1rem;">
@@ -130,9 +151,76 @@ function submitTimezone(tz) {
             document.getElementById('currentTimeLabel').innerText = data.timezone;
             document.getElementById('currentTimeValue').innerText = data.currentTime;
             showStatus(data.message);
+
+            const reminderEnabled = document.getElementById('missing_entries_reminder_enabled')?.checked ?? true;
+            syncMissingEntriesReminder({
+                enabled: reminderEnabled,
+                timezone: data.timezone,
+                profile_name: @json(\App\Support\ActiveProfile::current()->name),
+                hour: 9,
+                minute: 0,
+                skip_today: false,
+            });
         }
     }).catch(error => {
         console.error('Timezone update failed:', error);
+    });
+}
+
+function syncMissingEntriesReminder(payload) {
+    if (window.AndroidBridge && typeof window.AndroidBridge.syncMissingEntriesReminder === 'function') {
+        window.AndroidBridge.syncMissingEntriesReminder(JSON.stringify(payload));
+    }
+}
+
+function submitMissingEntriesReminder(enabled) {
+    fetch('{{ route('settings.missing_entries_reminder', [], false) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: '_token={{ csrf_token() }}&enabled=' + (enabled ? '1' : '0')
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showStatus(data.message);
+            syncMissingEntriesReminder(data.payload);
+            return;
+        }
+
+        throw new Error('Reminder update failed.');
+    }).catch(error => {
+        const toggle = document.getElementById('missing_entries_reminder_enabled');
+        if (toggle) {
+            toggle.checked = !enabled;
+        }
+
+        console.error('Missing entries reminder update failed:', error);
+        showStatus('Failed to update reminder setting.', true);
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        syncMissingEntriesReminder({
+            enabled: @json($missingEntriesReminderEnabled),
+            timezone: @json($timezone),
+            profile_name: @json(\App\Support\ActiveProfile::current()->name),
+            hour: 9,
+            minute: 0,
+            skip_today: false,
+        });
+    });
+} else {
+    syncMissingEntriesReminder({
+        enabled: @json($missingEntriesReminderEnabled),
+        timezone: @json($timezone),
+        profile_name: @json(\App\Support\ActiveProfile::current()->name),
+        hour: 9,
+        minute: 0,
+        skip_today: false,
     });
 }
 </script>

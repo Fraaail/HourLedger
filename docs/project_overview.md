@@ -89,4 +89,4 @@ The architecture represents a self-contained web app running inside a native mob
 - `created_at`, `updated_at` (Timestamps)
 
 ## Mobile Platform Optimization
-For detailed suggestions on platform-specific features (biometrics, widgets, and notifications) for Android and iOS, refer to the [Mobile Recommendations](recommendations.md).
+For detailed suggestions on platform-specific features (biometrics, widgets, and notifications) for Android and iOS, refer to the [Mobile Recommendations](improvements.md).

@@ -1,7 +1,10 @@
 <?php
 
 use App\Models\Setting;
+use App\Models\TimeEntry;
+use App\Support\ActiveProfile;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Support\Carbon;
 
 test('settings page loads correctly', function () {
     $response = $this->get('/settings');
@@ -157,4 +160,79 @@ test('settings page does not include profile confirmation overlay', function () 
     $response->assertStatus(200);
     $response->assertDontSee('id="profileConfirmOverlay"', false);
     $response->assertDontSee('profile-confirmation-modal', false);
+});
+
+test('settings page shows missing entries reminder toggle', function () {
+    $response = $this->get('/settings');
+    $response->assertStatus(200);
+    $response->assertSee('Missing Entry Reminders', false);
+    $response->assertSee('missing_entries_reminder_enabled', false);
+});
+
+test('user can update missing entries reminder via ajax', function () {
+    Carbon::setTestNow(Carbon::create(2026, 3, 26, 7, 30, 0, 'UTC'));
+
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/settings/missing-entries-reminder', ['enabled' => true]);
+
+    $response->assertStatus(200);
+    $response->assertJson([
+        'success' => true,
+        'message' => 'Missing entry reminders updated.',
+        'enabled' => true,
+    ]);
+    $response->assertJsonPath('payload.enabled', true);
+    $response->assertJsonPath('payload.hour', 9);
+    $response->assertJsonPath('payload.minute', 0);
+    $response->assertJsonPath('payload.profile_name', ActiveProfile::current()->name);
+
+    $this->assertDatabaseHas('settings', [
+        'profile_id' => ActiveProfile::id(),
+        'key' => 'missing_entries_reminder_enabled',
+        'value' => '1',
+    ]);
+
+    Carbon::setTestNow();
+});
+
+test('reminder payload skips today when already clocked in', function () {
+    Carbon::setTestNow(Carbon::create(2026, 3, 26, 1, 0, 0, 'UTC'));
+    Setting::set('timezone', 'Asia/Manila');
+
+    TimeEntry::create([
+        'profile_id' => ActiveProfile::id(),
+        'date' => Carbon::now('Asia/Manila')->toDateString(),
+        'time_in' => Carbon::now(),
+    ]);
+
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/settings/missing-entries-reminder', ['enabled' => true]);
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('payload.timezone', 'Asia/Manila');
+    $response->assertJsonPath('payload.skip_today', true);
+
+    Carbon::setTestNow();
+});
+
+test('user can disable missing entries reminder via ajax', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/settings/missing-entries-reminder', ['enabled' => false]);
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('enabled', false);
+    $response->assertJsonPath('payload.enabled', false);
+
+    $this->assertDatabaseHas('settings', [
+        'profile_id' => ActiveProfile::id(),
+        'key' => 'missing_entries_reminder_enabled',
+        'value' => '0',
+    ]);
+});
+
+test('missing entries reminder update rejects invalid enabled value', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->post('/settings/missing-entries-reminder', ['enabled' => 'invalid']);
+
+    $response->assertSessionHasErrors('enabled');
 });

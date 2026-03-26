@@ -16,6 +16,7 @@ Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.ind
 Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 Route::post('/settings/timezone', [SettingsController::class, 'updateTimezone'])->name('settings.timezone');
 Route::post('/settings/theme', [SettingsController::class, 'updateTheme'])->name('settings.theme');
+Route::post('/settings/missing-entries-reminder', [SettingsController::class, 'updateMissingEntriesReminder'])->name('settings.missing_entries_reminder');
 Route::get('/native/widget/summary', [TimeEntryController::class, 'widgetSummary'])->name('native.widget.summary');
 Route::post('/journal/{date}', [JournalController::class, 'store'])->name('journal.store');
 Route::post('/profiles', [ProfileController::class, 'store'])->name('profiles.store');

@@ -78,3 +78,4 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Implement Biometric Authentication for profile access on Android and iOS using NativePHP's bridge.
 - [x] Implement Home Screen Widgets on Android (small and medium) with bridge-driven data sync from dashboard stats.
 - [x] Implement App Shortcuts / Quick Actions for Android on the app icon (iOS pending native target scaffolding).
+- [x] Implement weekday local missing-entry reminders with timezone-aware scheduling and per-profile toggle control.

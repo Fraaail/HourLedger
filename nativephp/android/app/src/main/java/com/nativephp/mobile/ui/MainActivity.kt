@@ -21,6 +21,7 @@ import com.nativephp.mobile.utils.NativeActionCoordinator
 import com.nativephp.mobile.utils.WebViewProvider
 import com.nativephp.mobile.security.LaravelCookieStore
 import com.nativephp.mobile.lifecycle.NativePHPLifecycle
+import com.nativephp.mobile.notifications.MissingEntriesReminderScheduler
 import com.nativephp.mobile.widget.HomeWidgetStore
 import com.nativephp.mobile.widget.HourLedgerWidgetProvider
 import java.io.File
@@ -54,6 +55,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.graphics.Insets
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 class MainActivity : FragmentActivity(), WebViewProvider {
     private lateinit var webView: WebView
@@ -965,6 +967,36 @@ class MainActivity : FragmentActivity(), WebViewProvider {
         fun syncHomeWidget(payloadJson: String?) {
             HomeWidgetStore.saveFromPayload(this@MainActivity, payloadJson)
             HourLedgerWidgetProvider.refreshAll(this@MainActivity)
+        }
+
+        @android.webkit.JavascriptInterface
+        fun syncMissingEntriesReminder(payloadJson: String?) {
+            if (payloadJson.isNullOrBlank()) {
+                MissingEntriesReminderScheduler.cancel(this@MainActivity)
+                return
+            }
+
+            try {
+                val payload = JSONObject(payloadJson)
+                val enabled = payload.optBoolean("enabled", true)
+                val timezone = payload.optString("timezone", "UTC")
+                val profileName = payload.optString("profile_name", "HourLedger")
+                val hour = payload.optInt("hour", 9)
+                val minute = payload.optInt("minute", 0)
+                val skipToday = payload.optBoolean("skip_today", false)
+
+                MissingEntriesReminderScheduler.sync(
+                    context = this@MainActivity,
+                    enabled = enabled,
+                    timezone = timezone,
+                    profileName = profileName,
+                    hour = hour,
+                    minute = minute,
+                    skipToday = skipToday
+                )
+            } catch (_: Exception) {
+                MissingEntriesReminderScheduler.cancel(this@MainActivity)
+            }
         }
     }
 

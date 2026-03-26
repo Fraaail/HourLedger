@@ -300,6 +300,7 @@ return [
 
     'permissions' => [
         'biometrics' => 'We need biometric access to secure your profile logs.',
+        'push_notifications' => 'We use local reminders to help you avoid missing time entries.',
     ],
 
     /*
