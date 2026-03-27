@@ -12,6 +12,7 @@ Route::post('/clock-out', [TimeEntryController::class, 'timeOut'])->name('time.o
 Route::get('/shortcut/clock-in', [TimeEntryController::class, 'timeIn'])->name('shortcut.time.in');
 Route::get('/shortcut/clock-out', [TimeEntryController::class, 'timeOut'])->name('shortcut.time.out');
 Route::get('/calendar', [TimeEntryController::class, 'calendar'])->name('calendar');
+Route::get('/export/timesheet.csv', [TimeEntryController::class, 'exportTimesheetCsv'])->name('export.timesheet.csv');
 Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.index');
 Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 Route::post('/settings/timezone', [SettingsController::class, 'updateTimezone'])->name('settings.timezone');

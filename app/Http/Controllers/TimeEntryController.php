@@ -10,6 +10,7 @@ use App\Support\ActiveProfile;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class TimeEntryController extends Controller
 {
@@ -73,6 +74,45 @@ class TimeEntryController extends Controller
         $journals = Journal::where('profile_id', $profileId)->get()->keyBy('date');
 
         return view('calendar', compact('entries', 'journals', 'tz'));
+    }
+
+    public function exportTimesheetCsv()
+    {
+        $profile = ActiveProfile::current();
+        $timezone = $this->getTimezone();
+
+        $entries = TimeEntry::where('profile_id', $profile->id)
+            ->orderBy('date')
+            ->get();
+
+        $journalsByDate = Journal::where('profile_id', $profile->id)
+            ->pluck('content', 'date');
+
+        $handle = fopen('php://temp', 'r+');
+
+        fputcsv($handle, ['date', 'time_in', 'time_out', 'total_hours', 'journal']);
+
+        foreach ($entries as $entry) {
+            fputcsv($handle, [
+                $entry->date,
+                $entry->time_in?->timezone($timezone)->format('Y-m-d H:i:s') ?? '',
+                $entry->time_out?->timezone($timezone)->format('Y-m-d H:i:s') ?? '',
+                $entry->total_minutes !== null ? number_format($entry->total_minutes / 60, 2, '.', '') : '',
+                $journalsByDate[$entry->date] ?? '',
+            ]);
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle) ?: '';
+        fclose($handle);
+
+        $fileSafeProfileName = Str::slug($profile->name) ?: 'profile';
+        $filename = 'timesheet-'.$fileSafeProfileName.'-'.Carbon::now()->format('Ymd-His').'.csv';
+
+        return response("\xEF\xBB\xBF".$csv, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
     }
 
     public function widgetSummary(Request $request): JsonResponse

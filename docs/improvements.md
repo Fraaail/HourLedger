@@ -29,13 +29,14 @@ This document outlines recommended features and optimizations to enhance the Hou
 - [ ] **Critical Alerts (iOS)**
     - **Recommendation:** Use iOS Critical Alerts for end-of-day reminders if hours are significantly under the requirement.
     - **Benefit:** Ensures the user notices important tracking deadlines even when the phone is on mute.
+    - **Implementation Note:** Blocked for now because this repository currently contains only the Android native target. iOS critical alerts require iOS project scaffolding, Apple entitlement approval, and APNs critical alert configuration.
 
 ## 3. Data Portability & Sharing
 
-- [ ] **Native Share Sheet Integration**
+- [x] **Native Share Sheet Integration**
     - **Recommendation:** Add an "Export & Share" feature that generates a PDF or CSV timesheet.
     - **Benefit:** Allows users to easily send their logs to supervisors or school coordinators directly from the app.
-    - **Implementation:** Use Laravel's PDF generation (e.g., DomPDF) and trigger the native `navigator.share()` or NativePHP share dialog.
+    - **Implementation:** Added profile-scoped CSV export endpoint (`/export/timesheet.csv`) with timezone-adjusted timestamps and journal columns, plus Settings UI action that uses `navigator.share()` with file payload where supported and falls back to direct CSV download.
 
 - [ ] **Haptic Feedback**
     - **Recommendation:** Implement distinct haptic patterns for "Clock In" (success), "Clock Out" (completion), and "Deletion" (warning).

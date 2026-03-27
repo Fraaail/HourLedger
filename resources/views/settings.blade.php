@@ -96,6 +96,13 @@
     </div>
 </div>
 
+<div class="settings-section">
+    <h2 class="settings-heading">Export &amp; Share</h2>
+    <p class="settings-description">Generate your profile timesheet as CSV and share it with supervisors or coordinators.</p>
+
+    <button type="button" class="settings-btn" onclick="exportAndShareTimesheet()">Export &amp; Share CSV</button>
+</div>
+
 <script>
 function showStatus(message, isError = false) {
     const notify = document.getElementById('statusNotification');
@@ -170,6 +177,72 @@ function submitTimezone(tz) {
 function syncMissingEntriesReminder(payload) {
     if (window.AndroidBridge && typeof window.AndroidBridge.syncMissingEntriesReminder === 'function') {
         window.AndroidBridge.syncMissingEntriesReminder(JSON.stringify(payload));
+    }
+}
+
+function extractFilename(dispositionHeader) {
+    if (!dispositionHeader) {
+        return 'timesheet.csv';
+    }
+
+    const utfMatch = dispositionHeader.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utfMatch && utfMatch[1]) {
+        return decodeURIComponent(utfMatch[1]);
+    }
+
+    const plainMatch = dispositionHeader.match(/filename="?([^\";]+)"?/i);
+    if (plainMatch && plainMatch[1]) {
+        return plainMatch[1];
+    }
+
+    return 'timesheet.csv';
+}
+
+async function exportAndShareTimesheet() {
+    try {
+        const response = await fetch('{{ route('export.timesheet.csv', [], false) }}', {
+            method: 'GET',
+            headers: {
+                'Accept': 'text/csv'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate timesheet file.');
+        }
+
+        const blob = await response.blob();
+        const filename = extractFilename(response.headers.get('content-disposition'));
+        const file = new File([blob], filename, { type: 'text/csv' });
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                title: 'HourLedger Timesheet',
+                text: 'Timesheet export from HourLedger.',
+                files: [file],
+            });
+            showStatus('Timesheet ready to share.');
+
+            return;
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        showStatus('Timesheet exported.');
+    } catch (error) {
+        if (error && error.name === 'AbortError') {
+            return;
+        }
+
+        console.error('Timesheet export failed:', error);
+        showStatus('Failed to export timesheet.', true);
     }
 }
 
