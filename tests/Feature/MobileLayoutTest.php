@@ -109,3 +109,20 @@ test('css uses dynamic viewport height for mobile', function () {
     $css = file_get_contents($cssPath);
     expect($css)->toContain('100dvh');
 });
+
+test('css enables dynamic type scaling support', function () {
+    $cssPath = public_path('css/custom.css');
+    $css = file_get_contents($cssPath);
+
+    expect($css)->toContain('text-size-adjust: 100%');
+    expect($css)->toContain('-webkit-text-size-adjust: 100%');
+    expect($css)->toContain('clamp(');
+});
+
+test('css keeps layout fluid under larger text sizes', function () {
+    $cssPath = public_path('css/custom.css');
+    $css = file_get_contents($cssPath);
+
+    expect($css)->toContain('repeat(auto-fit, minmax(9.5rem, 1fr))');
+    expect($css)->toContain('overflow-wrap: anywhere');
+});

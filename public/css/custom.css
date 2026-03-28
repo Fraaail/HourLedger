@@ -72,6 +72,9 @@
 }
 
 html {
+    font-size: 100%;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
     /* Prevent iOS rubber-band overscroll */
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
@@ -126,9 +129,10 @@ body {
 }
 
 .app-header h1 {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 0.95rem + 0.5vw, 1.25rem);
     font-weight: 800;
     letter-spacing: -0.5px;
+    overflow-wrap: anywhere;
 }
 
 .profile-switcher {
@@ -166,7 +170,7 @@ body {
 
 .metric-cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
     gap: 1rem;
     margin-bottom: 2rem;
 }
@@ -193,9 +197,10 @@ body {
 }
 
 .metric-card .value {
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 1.05rem + 1.5vw, 2rem);
     font-weight: 700;
     color: var(--text-primary);
+    overflow-wrap: anywhere;
 }
 
 .action-area {
@@ -211,7 +216,7 @@ body {
     border-radius: 50%;
     border: none;
     font-family: var(--font-mono);
-    font-size: min(1.5rem, 6vw);
+    font-size: clamp(1.1rem, 0.95rem + 1.2vw, 1.5rem);
     font-weight: 800;
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
@@ -231,9 +236,11 @@ body {
 }
 
 .btn-time span.helper {
-    font-size: 0.8rem;
+    font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.9rem);
     font-weight: 400;
     opacity: 0.8;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
 .btn-time:active {
@@ -266,6 +273,7 @@ body {
     margin-bottom: 1.5rem;
     color: var(--text-primary);
     font-size: 0.9rem;
+    overflow-wrap: anywhere;
 }
 
 .notification-title {
@@ -552,7 +560,7 @@ body {
 
 .profile-management-actions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
     gap: 0.5rem;
 }
 
@@ -620,10 +628,10 @@ body {
 
 .missing-journal-indicator {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 6px;
-    height: 6px;
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 0.375rem;
+    height: 0.375rem;
     border-radius: 50%;
     background-color: var(--danger-color);
 }
@@ -670,7 +678,7 @@ body {
     z-index: 1000;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    padding: 20px;
+    padding: 1.25rem;
 }
 
 .profile-confirmation-modal .modal-content {
@@ -682,8 +690,8 @@ body {
 }
 
 .profile-confirm-icon {
-    width: 52px;
-    height: 52px;
+    width: 3.25rem;
+    height: 3.25rem;
     margin: 0 auto 0.9rem auto;
     border-radius: 50%;
     display: flex;
@@ -732,17 +740,19 @@ body {
 }
 
 .modal-title {
-    font-size: 1.25rem;
+    font-size: clamp(1.1rem, 1rem + 0.75vw, 1.35rem);
     font-weight: 800;
     margin-bottom: 0.75rem;
     color: var(--text-primary);
+    overflow-wrap: anywhere;
 }
 
 .modal-body {
-    font-size: 0.95rem;
+    font-size: clamp(0.9rem, 0.85rem + 0.3vw, 1rem);
     color: var(--text-secondary);
     margin-bottom: 1.5rem;
     line-height: 1.4;
+    overflow-wrap: anywhere;
 }
 
 .modal-actions {
@@ -827,7 +837,7 @@ body {
     border-radius: 50px;
     color: var(--text-primary);
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: clamp(0.82rem, 0.8rem + 0.2vw, 0.95rem);
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -838,8 +848,8 @@ body {
 }
 
 .profile-header-avatar {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
     border-radius: 50%;
     background-color: var(--accent-color);
     color: white;
@@ -893,8 +903,8 @@ body {
 }
 
 .profile-list-avatar {
-    width: 38px;
-    height: 38px;
+    width: 2.375rem;
+    height: 2.375rem;
     border-radius: 50%;
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
@@ -904,6 +914,16 @@ body {
     justify-content: center;
     font-size: 1.1rem;
     font-weight: 800;
+}
+
+/* Dynamic type safety for larger text settings. */
+.settings-description,
+.settings-heading,
+.profile-list-name,
+.profile-header-name,
+.notification-title,
+.details-row {
+    overflow-wrap: anywhere;
 }
 
 .profile-list-btn.active .profile-list-avatar {

@@ -45,10 +45,10 @@ This document outlines recommended features and optimizations to enhance the Hou
 
 ## 4. UI/UX Refinements
 
-- [ ] **Dynamic Type Support (iOS)**
+- [x] **Dynamic Type Support (iOS)**
     - **Recommendation:** Ensure all JetBrains Mono typography scales correctly with the system's "Larger Text" settings.
     - **Benefit:** Critical for accessibility and users with visual impairments.
-    - **Implementation:** Use `rem` units and verify layout fluidness under extreme scaling.
+    - **Implementation:** Updated typography and key layout text sizes to scalable `rem`/`clamp()` values, enabled `text-size-adjust`/`-webkit-text-size-adjust`, converted fixed text-adjacent pixel values to rem where appropriate, and added overflow-safe wrapping plus auto-fit metric-card columns to keep layout stable at larger text sizes.
 
 - [ ] **Android "Back" Gesture Handling**
     - **Recommendation:** Intercept the Android back gesture/button to handle modal dismissals before closing the app.
