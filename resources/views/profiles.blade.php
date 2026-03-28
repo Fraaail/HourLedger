@@ -351,6 +351,10 @@ function unarchiveProfile(profileId, profileName) {
 }
 
 function deleteProfile(profileId, profileName) {
+    if (typeof window.triggerHapticFeedback === 'function') {
+        window.triggerHapticFeedback('deletion_warning');
+    }
+
     openProfileConfirm({
         title: 'Delete Profile',
         body: 'Delete "' + profileName + '" permanently? This cannot be undone.',

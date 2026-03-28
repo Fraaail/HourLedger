@@ -81,3 +81,4 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Implement weekday local missing-entry reminders with timezone-aware scheduling and per-profile toggle control.
 - [ ] Implement iOS Critical Alerts for end-of-day under-hours reminders (blocked until iOS native target scaffolding and entitlement setup are available).
 - [x] Implement Native Share Sheet integration with profile-scoped CSV export and mobile share/download fallback.
+- [x] Implement haptic feedback patterns for clock-in, clock-out, and destructive delete warning actions.

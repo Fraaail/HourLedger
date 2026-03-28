@@ -66,6 +66,7 @@
 
 <script>
 let currentUrl = '';
+let currentHapticType = null;
 
 const widgetPayload = {
     profile_name: @json(\App\Support\ActiveProfile::current()->name),
@@ -109,6 +110,7 @@ if (document.readyState === 'loading') {
 function submitClock(url) {
     currentUrl = url;
     const isClockIn = url.indexOf('clock-in') !== -1;
+    currentHapticType = isClockIn ? 'clock_in_success' : 'clock_out_completion';
     const modal = document.getElementById('confirmModal');
     const title = document.getElementById('modalTitle');
     const body = document.getElementById('modalBody');
@@ -143,6 +145,10 @@ function executeSubmit() {
         },
         body: '_token={{ csrf_token() }}'
     }).then(function() {
+        if (typeof window.triggerHapticFeedback === 'function' && currentHapticType) {
+            window.triggerHapticFeedback(currentHapticType);
+        }
+
         window.location.href = '{{ route('dashboard', [], false) }}';
     }).catch(function() {
         window.location.href = '{{ route('dashboard', [], false) }}';

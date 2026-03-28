@@ -116,6 +116,25 @@
             const theme = "{{ \App\Models\Setting::get('theme', 'dark') }}";
             const html = document.documentElement;
             const meta = document.getElementById('theme-meta');
+            const hapticPatterns = {
+                clock_in_success: [20, 30, 20],
+                clock_out_completion: [40, 45, 40],
+                deletion_warning: [80, 45, 80],
+            };
+
+            window.triggerHapticFeedback = function(type) {
+                if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') {
+                    return false;
+                }
+
+                const pattern = hapticPatterns[type];
+
+                if (!pattern) {
+                    return false;
+                }
+
+                return navigator.vibrate(pattern);
+            };
 
             function updateTheme(val) {
                 html.classList.remove('theme-dark', 'theme-light', 'theme-system');

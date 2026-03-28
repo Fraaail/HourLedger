@@ -17,6 +17,15 @@ test('dashboard includes confirmation modal', function () {
     $response->assertSee('Clock Out', false);
 });
 
+test('dashboard includes haptic feedback hooks for clock actions', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('clock_in_success', false);
+    $response->assertSee('clock_out_completion', false);
+    $response->assertSee('window.triggerHapticFeedback', false);
+});
+
 test('user can log time in', function () {
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/clock-in');

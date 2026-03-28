@@ -38,10 +38,10 @@ This document outlines recommended features and optimizations to enhance the Hou
     - **Benefit:** Allows users to easily send their logs to supervisors or school coordinators directly from the app.
     - **Implementation:** Added profile-scoped CSV export endpoint (`/export/timesheet.csv`) with timezone-adjusted timestamps and journal columns, plus Settings UI action that uses `navigator.share()` with file payload where supported and falls back to direct CSV download.
 
-- [ ] **Haptic Feedback**
+- [x] **Haptic Feedback**
     - **Recommendation:** Implement distinct haptic patterns for "Clock In" (success), "Clock Out" (completion), and "Deletion" (warning).
     - **Benefit:** Provides physical confirmation of actions, making the app feel more "native" and responsive.
-    - **Implementation:** Use the `vibrate` API or NativePHP haptic bridge.
+    - **Implementation:** Added a global haptic helper in the base layout using `navigator.vibrate()` with distinct patterns (`clock_in_success`, `clock_out_completion`, `deletion_warning`) and wired it to dashboard clock action success flow and profile delete warning flow.
 
 ## 4. UI/UX Refinements
 

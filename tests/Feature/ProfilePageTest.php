@@ -28,3 +28,11 @@ test('profile navigation item is active on profiles page', function () {
     $response->assertSee('>Profile<', false);
     $response->assertSee(route('profiles.index', [], false), false);
 });
+
+test('profiles page includes deletion warning haptic hook', function () {
+    $response = $this->get('/profiles');
+
+    $response->assertOk();
+    $response->assertSee('deletion_warning', false);
+    $response->assertSee("window.triggerHapticFeedback('deletion_warning')", false);
+});
