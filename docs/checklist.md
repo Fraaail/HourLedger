@@ -83,3 +83,4 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Implement Native Share Sheet integration with profile-scoped CSV export and mobile share/download fallback.
 - [x] Implement haptic feedback patterns for clock-in, clock-out, and destructive delete warning actions.
 - [x] Implement Dynamic Type support with scalable rem/clamp typography and fluid layout behavior for larger text settings.
+- [x] Implement Android back gesture handling so visible overlays/modals dismiss before app exit/navigation.

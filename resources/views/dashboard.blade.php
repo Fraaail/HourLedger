@@ -53,7 +53,7 @@
     @endif
 </div>
 
-<div class="modal-overlay" id="confirmModal">
+<div class="modal-overlay" id="confirmModal" data-back-close-handler="closeModal">
     <div class="modal-content">
         <div class="modal-title" id="modalTitle">Confirm Action</div>
         <div class="modal-body" id="modalBody">Are you sure you want to proceed?</div>
@@ -125,10 +125,18 @@ function submitClock(url) {
     confirmBtn.onclick = executeSubmit;
 
     modal.classList.add('visible');
+
+    if (typeof window.pushModalHistory === 'function') {
+        window.pushModalHistory('confirmModal');
+    }
 }
 
-function closeModal() {
+function closeModal(fromBack) {
     document.getElementById('confirmModal').classList.remove('visible');
+
+    if (!fromBack && typeof window.popModalHistory === 'function') {
+        window.popModalHistory('confirmModal');
+    }
 }
 
 function executeSubmit() {

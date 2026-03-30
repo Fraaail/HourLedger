@@ -50,10 +50,10 @@ This document outlines recommended features and optimizations to enhance the Hou
     - **Benefit:** Critical for accessibility and users with visual impairments.
     - **Implementation:** Updated typography and key layout text sizes to scalable `rem`/`clamp()` values, enabled `text-size-adjust`/`-webkit-text-size-adjust`, converted fixed text-adjacent pixel values to rem where appropriate, and added overflow-safe wrapping plus auto-fit metric-card columns to keep layout stable at larger text sizes.
 
-- [ ] **Android "Back" Gesture Handling**
+- [x] **Android "Back" Gesture Handling**
     - **Recommendation:** Intercept the Android back gesture/button to handle modal dismissals before closing the app.
     - **Benefit:** Prevents accidental app exits when the user just wants to close a profile overlay or confirmation modal.
-    - **Implementation:** Use the `popstate` event or NativePHP's window management hooks.
+    - **Implementation:** Added a global modal history helper (`window.pushModalHistory` / `window.popModalHistory`) in the base layout and `popstate` interception so Android back closes visible overlays first (dashboard confirmation modal, profile confirmation modal, profile switcher sheet) before normal navigation/exit behavior.
 
 - [ ] **iOS "Pull to Refresh"**
     - **Recommendation:** Implement a custom pull-to-refresh on the Dashboard.

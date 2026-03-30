@@ -86,7 +86,7 @@
         </nav>
 
         @if(isset($profiles, $activeProfile))
-        <div class="modal-overlay profile-switcher-sheet" id="profileSwitcherModal" onclick="if(event.target===this) closeProfileSwitcher()">
+        <div class="modal-overlay profile-switcher-sheet" id="profileSwitcherModal" data-back-close-handler="closeProfileSwitcher" onclick="if(event.target===this) closeProfileSwitcher()">
             <div class="modal-content">
                 <div class="sheet-handle"></div>
                 <h3 class="modal-title" style="text-align: left; margin-bottom: 0.25rem;">Switch Profile</h3>
@@ -116,6 +116,8 @@
             const theme = "{{ \App\Models\Setting::get('theme', 'dark') }}";
             const html = document.documentElement;
             const meta = document.getElementById('theme-meta');
+            const modalHistoryStack = [];
+            let ignoreNextModalPopstate = false;
             const hapticPatterns = {
                 clock_in_success: [20, 30, 20],
                 clock_out_completion: [40, 45, 40],
@@ -135,6 +137,80 @@
 
                 return navigator.vibrate(pattern);
             };
+
+            window.pushModalHistory = function(modalId) {
+                const modal = document.getElementById(modalId);
+
+                if (!modal || !modal.classList.contains('visible')) {
+                    return;
+                }
+
+                if (modalHistoryStack[modalHistoryStack.length - 1] === modalId) {
+                    return;
+                }
+
+                modalHistoryStack.push(modalId);
+                window.history.pushState({
+                    hourledgerModal: true,
+                    modalId: modalId,
+                }, '', window.location.href);
+            };
+
+            window.popModalHistory = function(modalId) {
+                if (!modalHistoryStack.length) {
+                    return;
+                }
+
+                const topModalId = modalHistoryStack[modalHistoryStack.length - 1];
+
+                if (topModalId !== modalId) {
+                    const index = modalHistoryStack.lastIndexOf(modalId);
+                    if (index !== -1) {
+                        modalHistoryStack.splice(index, 1);
+                    }
+
+                    return;
+                }
+
+                modalHistoryStack.pop();
+
+                if (window.history.state && window.history.state.hourledgerModal === true) {
+                    ignoreNextModalPopstate = true;
+                    window.history.back();
+                }
+            };
+
+            window.addEventListener('popstate', function(event) {
+                if (ignoreNextModalPopstate) {
+                    ignoreNextModalPopstate = false;
+                    return;
+                }
+
+                const stateModalId = event.state && event.state.hourledgerModal
+                    ? event.state.modalId
+                    : null;
+
+                const modalId = modalHistoryStack.pop() || stateModalId;
+
+                if (!modalId) {
+                    return;
+                }
+
+                const modal = document.getElementById(modalId);
+
+                if (!modal || !modal.classList.contains('visible')) {
+                    return;
+                }
+
+                const closeHandlerName = modal.dataset.backCloseHandler;
+
+                if (closeHandlerName && typeof window[closeHandlerName] === 'function') {
+                    window[closeHandlerName](true);
+                    return;
+                }
+
+                modal.classList.remove('visible');
+            });
 
             function updateTheme(val) {
                 html.classList.remove('theme-dark', 'theme-light', 'theme-system');
@@ -162,11 +238,23 @@
             });
 
             window.openProfileSwitcher = function() {
-                document.getElementById('profileSwitcherModal').classList.add('visible');
+                const modal = document.getElementById('profileSwitcherModal');
+
+                modal.classList.add('visible');
+
+                if (typeof window.pushModalHistory === 'function') {
+                    window.pushModalHistory('profileSwitcherModal');
+                }
             };
 
-            window.closeProfileSwitcher = function() {
-                document.getElementById('profileSwitcherModal').classList.remove('visible');
+            window.closeProfileSwitcher = function(fromBack) {
+                const modal = document.getElementById('profileSwitcherModal');
+
+                modal.classList.remove('visible');
+
+                if (!fromBack && typeof window.popModalHistory === 'function') {
+                    window.popModalHistory('profileSwitcherModal');
+                }
             };
 
             window.switchActiveProfile = function(profileId) {

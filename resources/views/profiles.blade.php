@@ -116,7 +116,7 @@
     </div>
 </div>
 
-<div id="profileConfirmOverlay" class="modal-overlay profile-confirmation-modal" aria-hidden="true">
+<div id="profileConfirmOverlay" class="modal-overlay profile-confirmation-modal" data-back-close-handler="closeProfileConfirm" aria-hidden="true">
     <div class="modal-content">
         <div class="profile-confirm-icon" id="profileConfirmIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -154,12 +154,16 @@ function profileConfirmElements() {
     };
 }
 
-function closeProfileConfirm() {
+function closeProfileConfirm(fromBack) {
     const elements = profileConfirmElements();
 
     elements.overlay.classList.remove('visible');
     elements.overlay.setAttribute('aria-hidden', 'true');
     profileConfirmState.callback = null;
+
+    if (!fromBack && typeof window.popModalHistory === 'function') {
+        window.popModalHistory('profileConfirmOverlay');
+    }
 }
 
 function openProfileConfirm(options) {
@@ -175,6 +179,10 @@ function openProfileConfirm(options) {
     profileConfirmState.callback = options.onConfirm;
     elements.overlay.classList.add('visible');
     elements.overlay.setAttribute('aria-hidden', 'false');
+
+    if (typeof window.pushModalHistory === 'function') {
+        window.pushModalHistory('profileConfirmOverlay');
+    }
 }
 
 function showStatus(message, isError = false) {

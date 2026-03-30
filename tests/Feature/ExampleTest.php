@@ -26,6 +26,15 @@ test('dashboard includes haptic feedback hooks for clock actions', function () {
     $response->assertSee('window.triggerHapticFeedback', false);
 });
 
+test('dashboard confirmation modal includes back-dismiss hooks', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('data-back-close-handler="closeModal"', false);
+    $response->assertSee("window.pushModalHistory('confirmModal')", false);
+    $response->assertSee("window.popModalHistory('confirmModal')", false);
+});
+
 test('user can log time in', function () {
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/clock-in');

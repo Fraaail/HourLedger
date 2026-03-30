@@ -36,3 +36,12 @@ test('profiles page includes deletion warning haptic hook', function () {
     $response->assertSee('deletion_warning', false);
     $response->assertSee("window.triggerHapticFeedback('deletion_warning')", false);
 });
+
+test('profiles confirmation modal includes back-dismiss hooks', function () {
+    $response = $this->get('/profiles');
+
+    $response->assertOk();
+    $response->assertSee('data-back-close-handler="closeProfileConfirm"', false);
+    $response->assertSee("window.pushModalHistory('profileConfirmOverlay')", false);
+    $response->assertSee("window.popModalHistory('profileConfirmOverlay')", false);
+});

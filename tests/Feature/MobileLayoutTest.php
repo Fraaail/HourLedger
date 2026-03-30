@@ -126,3 +126,23 @@ test('css keeps layout fluid under larger text sizes', function () {
     expect($css)->toContain('repeat(auto-fit, minmax(9.5rem, 1fr))');
     expect($css)->toContain('overflow-wrap: anywhere');
 });
+
+test('layout includes global modal history back handling helpers', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('window.pushModalHistory', false);
+    $response->assertSee('window.popModalHistory', false);
+    $response->assertSee("window.addEventListener('popstate'", false);
+    $response->assertSee('hourledgerModal', false);
+});
+
+test('profile switcher modal includes back-dismiss handler binding', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('id="profileSwitcherModal"', false);
+    $response->assertSee('data-back-close-handler="closeProfileSwitcher"', false);
+    $response->assertSee("window.pushModalHistory('profileSwitcherModal')", false);
+    $response->assertSee("window.popModalHistory('profileSwitcherModal')", false);
+});
