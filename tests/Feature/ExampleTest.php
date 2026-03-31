@@ -35,6 +35,16 @@ test('dashboard confirmation modal includes back-dismiss hooks', function () {
     $response->assertSee("window.popModalHistory('confirmModal')", false);
 });
 
+test('dashboard includes iOS pull-to-refresh hooks', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('id="pullToRefreshIndicator"', false);
+    $response->assertSee('Pull to refresh', false);
+    $response->assertSee('registerPullToRefresh', false);
+    $response->assertSee('isIOSPullSupported', false);
+});
+
 test('user can log time in', function () {
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/clock-in');

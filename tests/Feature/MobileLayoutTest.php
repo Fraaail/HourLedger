@@ -146,3 +146,13 @@ test('profile switcher modal includes back-dismiss handler binding', function ()
     $response->assertSee("window.pushModalHistory('profileSwitcherModal')", false);
     $response->assertSee("window.popModalHistory('profileSwitcherModal')", false);
 });
+
+test('css includes pull-to-refresh indicator styles', function () {
+    $cssPath = public_path('css/custom.css');
+    $css = file_get_contents($cssPath);
+
+    expect($css)->toContain('.pull-refresh-indicator');
+    expect($css)->toContain('.pull-refresh-indicator.refreshing');
+    expect($css)->toContain('@keyframes pullRefreshSpin');
+    expect($css)->toContain('.app-main.pull-refresh-active');
+});

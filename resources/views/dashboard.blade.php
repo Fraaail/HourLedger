@@ -23,6 +23,11 @@
 </div>
 @endif
 
+<div id="pullToRefreshIndicator" class="pull-refresh-indicator" aria-live="polite" aria-hidden="true">
+    <span class="pull-refresh-spinner" aria-hidden="true"></span>
+    <span id="pullToRefreshText">Pull to refresh</span>
+</div>
+
 <div class="metric-cards">
     <div class="metric-card">
         <h3>Total Rendered</h3>
@@ -67,6 +72,21 @@
 <script>
 let currentUrl = '';
 let currentHapticType = null;
+const appMain = document.querySelector('.app-main');
+const pullIndicator = document.getElementById('pullToRefreshIndicator');
+const pullText = document.getElementById('pullToRefreshText');
+
+const pullToRefresh = {
+    enabled: false,
+    active: false,
+    armed: false,
+    startY: 0,
+    distance: 0,
+    refreshing: false,
+};
+
+const PULL_THRESHOLD = 82;
+const PULL_MAX = 130;
 
 const widgetPayload = {
     profile_name: @json(\App\Support\ActiveProfile::current()->name),
@@ -97,14 +117,150 @@ function syncMissingEntriesReminder() {
     }
 }
 
+function isIOSPullSupported() {
+    const ua = window.navigator.userAgent || '';
+
+    return /iPad|iPhone|iPod/.test(ua) || (ua.includes('Macintosh') && 'ontouchend' in document);
+}
+
+function updatePullUI(distance) {
+    const clamped = Math.min(Math.max(distance, 0), PULL_MAX);
+    const offset = Math.round(clamped * 0.45);
+
+    pullIndicator.classList.add('visible');
+    pullIndicator.style.transform = 'translate(-50%, calc(-110% + ' + offset + 'px))';
+    pullText.innerText = clamped >= PULL_THRESHOLD ? 'Release to refresh' : 'Pull to refresh';
+
+    if (appMain) {
+        appMain.classList.remove('pull-refresh-reset');
+        appMain.classList.add('pull-refresh-active');
+        appMain.style.transform = 'translateY(' + offset + 'px)';
+    }
+}
+
+function resetPullUI() {
+    pullToRefresh.active = false;
+    pullToRefresh.armed = false;
+    pullToRefresh.distance = 0;
+
+    pullIndicator.classList.remove('visible', 'refreshing');
+    pullIndicator.style.transform = 'translate(-50%, -110%)';
+    pullText.innerText = 'Pull to refresh';
+
+    if (appMain) {
+        appMain.classList.remove('pull-refresh-active');
+        appMain.classList.add('pull-refresh-reset');
+        appMain.style.transform = 'translateY(0)';
+
+        window.setTimeout(function() {
+            appMain.classList.remove('pull-refresh-reset');
+        }, 220);
+    }
+}
+
+function startRefresh() {
+    if (pullToRefresh.refreshing) {
+        return;
+    }
+
+    pullToRefresh.refreshing = true;
+    pullIndicator.classList.add('visible', 'refreshing');
+    pullIndicator.style.transform = 'translate(-50%, calc(-110% + 56px))';
+    pullText.innerText = 'Refreshing...';
+
+    if (appMain) {
+        appMain.classList.remove('pull-refresh-active');
+        appMain.classList.add('pull-refresh-reset');
+        appMain.style.transform = 'translateY(42px)';
+    }
+
+    window.setTimeout(function() {
+        window.location.reload();
+    }, 120);
+}
+
+function handlePullStart(event) {
+    if (!pullToRefresh.enabled || pullToRefresh.refreshing) {
+        return;
+    }
+
+    if (event.touches.length !== 1) {
+        return;
+    }
+
+    if (document.querySelector('.modal-overlay.visible')) {
+        return;
+    }
+
+    if (appMain && appMain.scrollTop > 0) {
+        return;
+    }
+
+    pullToRefresh.active = true;
+    pullToRefresh.startY = event.touches[0].clientY;
+    pullToRefresh.distance = 0;
+}
+
+function handlePullMove(event) {
+    if (!pullToRefresh.active || pullToRefresh.refreshing) {
+        return;
+    }
+
+    const currentY = event.touches[0].clientY;
+    const delta = currentY - pullToRefresh.startY;
+
+    if (delta <= 0) {
+        return;
+    }
+
+    if (appMain && appMain.scrollTop > 0) {
+        resetPullUI();
+        return;
+    }
+
+    pullToRefresh.distance = delta;
+    pullToRefresh.armed = delta >= PULL_THRESHOLD;
+    updatePullUI(delta);
+
+    event.preventDefault();
+}
+
+function handlePullEnd() {
+    if (!pullToRefresh.active || pullToRefresh.refreshing) {
+        return;
+    }
+
+    if (pullToRefresh.armed) {
+        startRefresh();
+        return;
+    }
+
+    resetPullUI();
+}
+
+function registerPullToRefresh() {
+    pullToRefresh.enabled = isIOSPullSupported() && !!appMain && !!pullIndicator && !!pullText;
+
+    if (!pullToRefresh.enabled) {
+        return;
+    }
+
+    window.addEventListener('touchstart', handlePullStart, { passive: true });
+    window.addEventListener('touchmove', handlePullMove, { passive: false });
+    window.addEventListener('touchend', handlePullEnd, { passive: true });
+    window.addEventListener('touchcancel', handlePullEnd, { passive: true });
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
         syncHomeWidget();
         syncMissingEntriesReminder();
+        registerPullToRefresh();
     });
 } else {
     syncHomeWidget();
     syncMissingEntriesReminder();
+    registerPullToRefresh();
 }
 
 function submitClock(url) {

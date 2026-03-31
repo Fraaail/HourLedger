@@ -276,6 +276,66 @@ body {
     overflow-wrap: anywhere;
 }
 
+.pull-refresh-indicator {
+    position: fixed;
+    left: 50%;
+    top: calc(var(--safe-top, var(--inset-top, 0px)) + 0.5rem);
+    transform: translate(-50%, -110%);
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background-color: var(--surface-color);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    z-index: 130;
+    pointer-events: none;
+    transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
+}
+
+.pull-refresh-indicator.visible {
+    opacity: 1;
+}
+
+.pull-refresh-spinner {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 2px solid var(--accent-color);
+    border-right-color: transparent;
+    opacity: 0;
+}
+
+.pull-refresh-indicator.refreshing {
+    color: var(--accent-color);
+}
+
+.pull-refresh-indicator.refreshing .pull-refresh-spinner {
+    opacity: 1;
+    animation: pullRefreshSpin 0.85s linear infinite;
+}
+
+@keyframes pullRefreshSpin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.app-main.pull-refresh-active {
+    transition: none;
+}
+
+.app-main.pull-refresh-reset {
+    transition: transform 0.2s ease;
+}
+
 .notification-title {
     color: var(--danger-color);
     font-weight: 700;

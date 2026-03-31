@@ -55,9 +55,10 @@ This document outlines recommended features and optimizations to enhance the Hou
     - **Benefit:** Prevents accidental app exits when the user just wants to close a profile overlay or confirmation modal.
     - **Implementation:** Added a global modal history helper (`window.pushModalHistory` / `window.popModalHistory`) in the base layout and `popstate` interception so Android back closes visible overlays first (dashboard confirmation modal, profile confirmation modal, profile switcher sheet) before normal navigation/exit behavior.
 
-- [ ] **iOS "Pull to Refresh"**
+- [x] **iOS "Pull to Refresh"**
     - **Recommendation:** Implement a custom pull-to-refresh on the Dashboard.
     - **Benefit:** A familiar gesture for mobile users to trigger a re-calculation of stats or sync check.
+    - **Implementation:** Added a custom Dashboard pull-to-refresh gesture gated to iOS-style touch environments with a visual indicator, release-to-refresh threshold, modal-awareness checks, and a safe reload trigger for recalculating rendered stats.
 
 ## 5. Performance Improvements
 
