@@ -62,9 +62,10 @@ This document outlines recommended features and optimizations to enhance the Hou
 
 ## 5. Performance Improvements
 
-- [ ] **Image Optimization**
+- [x] **Image Optimization**
     - **Recommendation:** Use WebP format for all assets and provide responsive image sizes.
     - **Benefit:** Reduces memory usage and improves loading speed within the WebView.
+    - **Implementation:** Generated responsive WebP logo variants (`32w`, `48w`, `64w`) and updated header branding to use a `picture` element with WebP `srcset` + `sizes` and SVG fallback for compatibility.
 
 - [ ] **Background Refresh (Background App Refresh)**
     - **Recommendation:** Enable background fetch to calculate missing entries even when the app isn't active.

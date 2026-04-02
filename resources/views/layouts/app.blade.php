@@ -21,7 +21,23 @@
     <div id="app" class="fade-in">
         <header class="app-header">
             <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <img src="{{ asset('logo.svg') }}" alt="HourLedger Logo" style="width: 28px; height: 28px;" />
+                <picture>
+                    <source
+                        type="image/webp"
+                        srcset="{{ asset('images/logo-32.webp') }} 32w, {{ asset('images/logo-48.webp') }} 48w, {{ asset('images/logo-64.webp') }} 64w"
+                        sizes="28px"
+                    >
+                    <img
+                        src="{{ asset('logo.svg') }}"
+                        alt="HourLedger Logo"
+                        width="28"
+                        height="28"
+                        loading="eager"
+                        decoding="async"
+                        fetchpriority="high"
+                        style="width: 28px; height: 28px;"
+                    >
+                </picture>
                 <h1 style="margin: 0;">HourLedger</h1>
             </div>
             @if(isset($profiles, $activeProfile))

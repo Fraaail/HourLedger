@@ -85,3 +85,4 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Implement Dynamic Type support with scalable rem/clamp typography and fluid layout behavior for larger text settings.
 - [x] Implement Android back gesture handling so visible overlays/modals dismiss before app exit/navigation.
 - [x] Implement custom iOS pull-to-refresh interaction on Dashboard with release threshold and visual refresh indicator.
+- [x] Implement image optimization with responsive WebP assets and fallback rendering for logo branding.

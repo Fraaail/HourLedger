@@ -32,6 +32,24 @@ test('custom css file is linked in layout', function () {
     $response->assertSee('css/custom.css', false);
 });
 
+test('layout includes responsive webp logo source with svg fallback', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('type="image/webp"', false);
+    $response->assertSee('images/logo-32.webp', false);
+    $response->assertSee('images/logo-48.webp', false);
+    $response->assertSee('images/logo-64.webp', false);
+    $response->assertSee('sizes="28px"', false);
+    $response->assertSee('src="'.asset('logo.svg').'"', false);
+});
+
+test('optimized webp logo assets exist', function () {
+    expect(file_exists(public_path('images/logo-32.webp')))->toBeTrue();
+    expect(file_exists(public_path('images/logo-48.webp')))->toBeTrue();
+    expect(file_exists(public_path('images/logo-64.webp')))->toBeTrue();
+});
+
 test('css declares default inset custom properties in root', function () {
     $cssPath = public_path('css/custom.css');
     expect(file_exists($cssPath))->toBeTrue();
