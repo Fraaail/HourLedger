@@ -15,6 +15,12 @@ import java.time.ZonedDateTime
 
 object MissingEntriesReminderScheduler {
     private const val REMINDER_REQUEST_CODE = 7401
+    private const val PREFS_NAME = "hourledger_missing_entries_refresh"
+    private const val PREF_TIMEZONE = "timezone"
+    private const val PREF_PROFILE_NAME = "profile_name"
+    private const val PREF_HOUR = "hour"
+    private const val PREF_MINUTE = "minute"
+    private const val PREF_SKIP_TODAY = "skip_today"
     const val CHANNEL_ID = "hourledger_missing_entries"
     const val ACTION_REMINDER = "com.nativephp.mobile.action.MISSING_ENTRIES_REMINDER"
     const val EXTRA_PROFILE_NAME = "profile_name"
@@ -35,6 +41,15 @@ object MissingEntriesReminderScheduler {
             cancel(context)
             return
         }
+
+        persistConfiguration(
+            context = context,
+            timezone = timezone,
+            profileName = profileName,
+            hour = hour,
+            minute = minute,
+            skipToday = skipToday
+        )
 
         createNotificationChannel(context)
 
@@ -73,12 +88,40 @@ object MissingEntriesReminderScheduler {
     }
 
     fun cancel(context: Context) {
+        clearConfiguration(context)
+
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = buildPendingIntent(context, "HourLedger", "UTC", 9, 0)
         alarmManager.cancel(pendingIntent)
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(MissingEntriesReminderReceiver.NOTIFICATION_ID)
+    }
+
+    fun refreshFromStorage(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+        if (!prefs.contains(PREF_TIMEZONE) || !prefs.contains(PREF_PROFILE_NAME)) {
+            return false
+        }
+
+        val timezone = prefs.getString(PREF_TIMEZONE, "UTC") ?: "UTC"
+        val profileName = prefs.getString(PREF_PROFILE_NAME, "HourLedger") ?: "HourLedger"
+        val hour = prefs.getInt(PREF_HOUR, 9)
+        val minute = prefs.getInt(PREF_MINUTE, 0)
+        val skipToday = prefs.getBoolean(PREF_SKIP_TODAY, false)
+
+        sync(
+            context = context,
+            enabled = true,
+            timezone = timezone,
+            profileName = profileName,
+            hour = hour,
+            minute = minute,
+            skipToday = skipToday
+        )
+
+        return true
     }
 
     fun canPostNotifications(context: Context): Boolean {
@@ -138,5 +181,30 @@ object MissingEntriesReminderScheduler {
         } catch (_: Exception) {
             ZoneId.systemDefault()
         }
+    }
+
+    private fun persistConfiguration(
+        context: Context,
+        timezone: String,
+        profileName: String,
+        hour: Int,
+        minute: Int,
+        skipToday: Boolean
+    ) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putString(PREF_TIMEZONE, timezone)
+            .putString(PREF_PROFILE_NAME, profileName)
+            .putInt(PREF_HOUR, hour.coerceIn(0, 23))
+            .putInt(PREF_MINUTE, minute.coerceIn(0, 59))
+            .putBoolean(PREF_SKIP_TODAY, skipToday)
+            .apply()
+    }
+
+    private fun clearConfiguration(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .clear()
+            .apply()
     }
 }

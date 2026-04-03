@@ -30,6 +30,7 @@ android/app/src/main/java/com/nativephp/mobile/ui/*
 android/app/src/main/java/com/nativephp/mobile/notifications/*
 !android/app/src/main/java/com/nativephp/mobile/notifications/MissingEntriesReminderScheduler.kt
 !android/app/src/main/java/com/nativephp/mobile/notifications/MissingEntriesReminderReceiver.kt
+!android/app/src/main/java/com/nativephp/mobile/notifications/MissingEntriesBackgroundRefreshReceiver.kt
 !android/app/src/main/java/com/nativephp/mobile/widget/
 !android/app/src/main/java/com/nativephp/mobile/widget/HomeWidgetStore.kt
 !android/app/src/main/java/com/nativephp/mobile/widget/HourLedgerWidgetProvider.kt

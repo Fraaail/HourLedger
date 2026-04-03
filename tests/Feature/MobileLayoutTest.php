@@ -174,3 +174,28 @@ test('css includes pull-to-refresh indicator styles', function () {
     expect($css)->toContain('@keyframes pullRefreshSpin');
     expect($css)->toContain('.app-main.pull-refresh-active');
 });
+
+test('android manifest includes background refresh receiver and boot permission', function () {
+    $manifestPath = base_path('nativephp/android/app/src/main/AndroidManifest.xml');
+    expect(file_exists($manifestPath))->toBeTrue();
+
+    $manifest = file_get_contents($manifestPath);
+
+    expect($manifest)->toContain('android.permission.RECEIVE_BOOT_COMPLETED');
+    expect($manifest)->toContain('MissingEntriesBackgroundRefreshReceiver');
+    expect($manifest)->toContain('android.intent.action.BOOT_COMPLETED');
+    expect($manifest)->toContain('android.intent.action.MY_PACKAGE_REPLACED');
+    expect($manifest)->toContain('android.intent.action.TIMEZONE_CHANGED');
+    expect($manifest)->toContain('android.intent.action.TIME_SET');
+});
+
+test('android reminder scheduler supports persisted background refresh restore', function () {
+    $schedulerPath = base_path('nativephp/android/app/src/main/java/com/nativephp/mobile/notifications/MissingEntriesReminderScheduler.kt');
+    expect(file_exists($schedulerPath))->toBeTrue();
+
+    $scheduler = file_get_contents($schedulerPath);
+
+    expect($scheduler)->toContain('refreshFromStorage');
+    expect($scheduler)->toContain('persistConfiguration');
+    expect($scheduler)->toContain('hourledger_missing_entries_refresh');
+});

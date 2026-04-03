@@ -67,6 +67,7 @@ This document outlines recommended features and optimizations to enhance the Hou
     - **Benefit:** Reduces memory usage and improves loading speed within the WebView.
     - **Implementation:** Generated responsive WebP logo variants (`32w`, `48w`, `64w`) and updated header branding to use a `picture` element with WebP `srcset` + `sizes` and SVG fallback for compatibility.
 
-- [ ] **Background Refresh (Background App Refresh)**
+- [x] **Background Refresh (Background App Refresh)**
     - **Recommendation:** Enable background fetch to calculate missing entries even when the app isn't active.
     - **Benefit:** Keeps notifications accurate without requiring the user to open the app daily.
+    - **Implementation:** Added Android background refresh resilience for reminder scheduling by persisting reminder configuration and restoring alarms after boot, app updates, timezone changes, and manual time changes via `MissingEntriesBackgroundRefreshReceiver` + `MissingEntriesReminderScheduler.refreshFromStorage()`. iOS background refresh remains pending until iOS native target scaffolding is added.
