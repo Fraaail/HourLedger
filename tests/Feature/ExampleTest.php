@@ -45,6 +45,14 @@ test('dashboard includes iOS pull-to-refresh hooks', function () {
     $response->assertSee('isIOSPullSupported', false);
 });
 
+test('dashboard includes under-hours alert sync hooks', function () {
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+    $response->assertSee('syncCriticalUnderHoursAlert', false);
+    $response->assertSee('criticalUnderHoursPayload', false);
+});
+
 test('user can log time in', function () {
     $response = $this->withoutMiddleware(ValidateCsrfToken::class)
         ->post('/clock-in');

@@ -8,4 +8,8 @@
     <string name="missing_entries_channel_description">Weekday reminders when no time-in has been recorded yet</string>
     <string name="missing_entries_notification_title">Missing Time Entry</string>
     <string name="missing_entries_notification_body">%1$s has no clock-in yet for today. Open HourLedger to record your time.</string>
+    <string name="under_hours_channel_name">Under-Hours Alerts</string>
+    <string name="under_hours_channel_description">End-of-day reminders when rendered hours are below target</string>
+    <string name="under_hours_notification_title">Under Target Hours</string>
+    <string name="under_hours_notification_body">%1$s is below target hours today (%2$sh of %3$sh). Open HourLedger to review your entries.</string>
 </resources>

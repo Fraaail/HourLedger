@@ -29,7 +29,8 @@ This document outlines recommended features and optimizations to enhance the Hou
 - [ ] **Critical Alerts (iOS)**
     - **Recommendation:** Use iOS Critical Alerts for end-of-day reminders if hours are significantly under the requirement.
     - **Benefit:** Ensures the user notices important tracking deadlines even when the phone is on mute.
-    - **Implementation Note:** Blocked for now because this repository currently contains only the Android native target. iOS critical alerts require iOS project scaffolding, Apple entitlement approval, and APNs critical alert configuration.
+    - **Implementation Progress:** Added under-hours alert configuration in Settings (enable toggle, target-hour threshold, reminder time), payload sync from Settings and Dashboard (`syncCriticalUnderHoursAlert`), Android high-priority local notification scheduling (`UnderHoursCriticalAlertScheduler` + receiver), and boot/time-change schedule restore via background refresh receiver.
+    - **Implementation Note:** iOS critical alerts remain blocked because this repository currently contains only the Android native target. Final iOS critical delivery still requires iOS project scaffolding, Apple entitlement approval, and APNs critical alert configuration.
 
 ## 3. Data Portability & Sharing
 

@@ -88,6 +88,57 @@
 </div>
 
 <div class="settings-section">
+    <h2 class="settings-heading">End-of-Day Under-Hours Alerts</h2>
+    <p class="settings-description">Schedule an end-of-day alert when your rendered time is still below your daily target.</p>
+
+    <form id="criticalAlertForm">
+        <div class="settings-field" style="padding: 0.75rem; border-radius: 0.75rem; background: var(--bg-secondary);">
+            <label for="critical_alerts_enabled" class="toggle-container" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; width: 100%;">
+                <span class="settings-label" style="margin-bottom: 0;">Enable Under-Hours Alert</span>
+                <input
+                    type="checkbox"
+                    name="critical_alerts_enabled"
+                    id="critical_alerts_enabled"
+                    style="width: 1.25rem; height: 1.25rem;"
+                    {{ $criticalAlertsEnabled ? 'checked' : '' }}
+                    onchange="submitCriticalAlerts()"
+                >
+            </label>
+        </div>
+
+        <div class="settings-field" style="margin-top: 0.75rem;">
+            <label for="critical_alert_required_hours" class="settings-label">Daily Target Hours</label>
+            <input
+                type="number"
+                id="critical_alert_required_hours"
+                class="settings-select"
+                min="1"
+                max="16"
+                step="0.5"
+                value="{{ number_format($criticalAlertRequiredMinutes / 60, 1, '.', '') }}"
+                onchange="submitCriticalAlerts()"
+            >
+        </div>
+
+        <div class="settings-field" style="margin-top: 0.75rem;">
+            <label for="critical_alert_time" class="settings-label">Reminder Time</label>
+            <input
+                type="time"
+                id="critical_alert_time"
+                class="settings-select"
+                value="{{ sprintf('%02d:%02d', $criticalAlertHour, $criticalAlertMinute) }}"
+                onchange="submitCriticalAlerts()"
+            >
+        </div>
+
+        <p class="settings-description" style="margin-top: 0.75rem;">
+            iOS Critical Alert delivery remains pending iOS native target scaffolding and Apple entitlement approval.
+            Current sync flow applies Android fallback scheduling and keeps payload support ready for future iOS wiring.
+        </p>
+    </form>
+</div>
+
+<div class="settings-section">
     <h2 class="settings-heading">Current Time</h2>
     <p class="settings-description">Based on your selected timezone.</p>
     <div class="metric-card" style="margin-top: 1rem;">
@@ -104,6 +155,8 @@
 </div>
 
 <script>
+let criticalUnderHoursBasePayload = @json($criticalUnderHoursPayload);
+
 function showStatus(message, isError = false) {
     const notify = document.getElementById('statusNotification');
     const text = document.getElementById('statusText');
@@ -168,6 +221,8 @@ function submitTimezone(tz) {
                 minute: 0,
                 skip_today: false,
             });
+
+            syncCriticalUnderHoursAlert(buildCriticalUnderHoursPayload(data.timezone));
         }
     }).catch(error => {
         console.error('Timezone update failed:', error);
@@ -178,6 +233,62 @@ function syncMissingEntriesReminder(payload) {
     if (window.AndroidBridge && typeof window.AndroidBridge.syncMissingEntriesReminder === 'function') {
         window.AndroidBridge.syncMissingEntriesReminder(JSON.stringify(payload));
     }
+}
+
+function syncCriticalUnderHoursAlert(payload) {
+    if (window.AndroidBridge && typeof window.AndroidBridge.syncCriticalUnderHoursAlert === 'function') {
+        window.AndroidBridge.syncCriticalUnderHoursAlert(JSON.stringify(payload));
+    }
+}
+
+function clampNumber(value, min, max, fallback) {
+    const parsed = Number(value);
+
+    if (!Number.isFinite(parsed)) {
+        return fallback;
+    }
+
+    return Math.min(max, Math.max(min, parsed));
+}
+
+function readCriticalAlertFormState() {
+    const enabled = document.getElementById('critical_alerts_enabled')?.checked ?? false;
+    const requiredHours = clampNumber(
+        document.getElementById('critical_alert_required_hours')?.value,
+        1,
+        16,
+        8
+    );
+    const requiredMinutes = Math.round(requiredHours * 60);
+
+    const timeValue = document.getElementById('critical_alert_time')?.value || '18:00';
+    const parts = timeValue.split(':');
+    const hour = clampNumber(parts[0], 0, 23, 18);
+    const minute = clampNumber(parts[1], 0, 59, 0);
+
+    return {
+        enabled: enabled,
+        required_minutes: requiredMinutes,
+        hour: hour,
+        minute: minute,
+    };
+}
+
+function buildCriticalUnderHoursPayload(timezoneOverride = null) {
+    const formState = readCriticalAlertFormState();
+    const timezone = timezoneOverride || criticalUnderHoursBasePayload.timezone;
+    const todayTotalMinutes = Number(criticalUnderHoursBasePayload.today_total_minutes || 0);
+
+    return {
+        enabled: formState.enabled,
+        timezone: timezone,
+        profile_name: criticalUnderHoursBasePayload.profile_name,
+        required_minutes: formState.required_minutes,
+        today_total_minutes: todayTotalMinutes,
+        under_hours: todayTotalMinutes < formState.required_minutes,
+        hour: formState.hour,
+        minute: formState.minute,
+    };
 }
 
 function extractFilename(dispositionHeader) {
@@ -275,6 +386,37 @@ function submitMissingEntriesReminder(enabled) {
     });
 }
 
+function submitCriticalAlerts() {
+    const formState = readCriticalAlertFormState();
+
+    fetch('{{ route('settings.critical_alerts', [], false) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: '_token={{ csrf_token() }}'
+            + '&enabled=' + (formState.enabled ? '1' : '0')
+            + '&required_minutes=' + encodeURIComponent(formState.required_minutes)
+            + '&hour=' + encodeURIComponent(formState.hour)
+            + '&minute=' + encodeURIComponent(formState.minute)
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            criticalUnderHoursBasePayload = data.payload;
+            showStatus(data.message);
+            syncCriticalUnderHoursAlert(data.payload);
+            return;
+        }
+
+        throw new Error('Critical alert update failed.');
+    }).catch(error => {
+        console.error('Critical alert update failed:', error);
+        showStatus('Failed to update under-hours alerts.', true);
+    });
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         syncMissingEntriesReminder({
@@ -285,6 +427,8 @@ if (document.readyState === 'loading') {
             minute: 0,
             skip_today: false,
         });
+
+        syncCriticalUnderHoursAlert(buildCriticalUnderHoursPayload());
     });
 } else {
     syncMissingEntriesReminder({
@@ -295,6 +439,8 @@ if (document.readyState === 'loading') {
         minute: 0,
         skip_today: false,
     });
+
+    syncCriticalUnderHoursAlert(buildCriticalUnderHoursPayload());
 }
 </script>
 

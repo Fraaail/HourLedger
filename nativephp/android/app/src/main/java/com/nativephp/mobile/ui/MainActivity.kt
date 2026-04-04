@@ -22,6 +22,7 @@ import com.nativephp.mobile.utils.WebViewProvider
 import com.nativephp.mobile.security.LaravelCookieStore
 import com.nativephp.mobile.lifecycle.NativePHPLifecycle
 import com.nativephp.mobile.notifications.MissingEntriesReminderScheduler
+import com.nativephp.mobile.notifications.UnderHoursCriticalAlertScheduler
 import com.nativephp.mobile.widget.HomeWidgetStore
 import com.nativephp.mobile.widget.HourLedgerWidgetProvider
 import java.io.File
@@ -996,6 +997,38 @@ class MainActivity : FragmentActivity(), WebViewProvider {
                 )
             } catch (_: Exception) {
                 MissingEntriesReminderScheduler.cancel(this@MainActivity)
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun syncCriticalUnderHoursAlert(payloadJson: String?) {
+            if (payloadJson.isNullOrBlank()) {
+                UnderHoursCriticalAlertScheduler.cancel(this@MainActivity)
+                return
+            }
+
+            try {
+                val payload = JSONObject(payloadJson)
+                val enabled = payload.optBoolean("enabled", false)
+                val timezone = payload.optString("timezone", "UTC")
+                val profileName = payload.optString("profile_name", "HourLedger")
+                val requiredMinutes = payload.optInt("required_minutes", 480)
+                val todayTotalMinutes = payload.optInt("today_total_minutes", 0)
+                val hour = payload.optInt("hour", 18)
+                val minute = payload.optInt("minute", 0)
+
+                UnderHoursCriticalAlertScheduler.sync(
+                    context = this@MainActivity,
+                    enabled = enabled,
+                    timezone = timezone,
+                    profileName = profileName,
+                    requiredMinutes = requiredMinutes,
+                    todayTotalMinutes = todayTotalMinutes,
+                    hour = hour,
+                    minute = minute
+                )
+            } catch (_: Exception) {
+                UnderHoursCriticalAlertScheduler.cancel(this@MainActivity)
             }
         }
     }

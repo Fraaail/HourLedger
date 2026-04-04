@@ -30,8 +30,9 @@ class TimeEntryController extends Controller
         $totalDays = TimeEntry::where('profile_id', $profileId)->whereNotNull('time_out')->count();
 
         $missingEntries = $this->getMissingEntries();
+        $criticalUnderHoursPayload = $this->buildCriticalUnderHoursPayload($entryToday, $tz);
 
-        return view('dashboard', compact('entryToday', 'totalMinutes', 'totalDays', 'missingEntries', 'tz'));
+        return view('dashboard', compact('entryToday', 'totalMinutes', 'totalDays', 'missingEntries', 'tz', 'criticalUnderHoursPayload'));
     }
 
     public function timeIn()
@@ -189,5 +190,32 @@ class TimeEntryController extends Controller
         }
 
         return $missing;
+    }
+
+    private function buildCriticalUnderHoursPayload(?TimeEntry $entryToday, string $timezone): array
+    {
+        $profile = ActiveProfile::current();
+        $requiredMinutes = max(60, min(960, (int) (Setting::get('critical_alert_required_minutes', '480') ?? '480')));
+        $hour = max(0, min(23, (int) (Setting::get('critical_alert_hour', '18') ?? '18')));
+        $minute = max(0, min(59, (int) (Setting::get('critical_alert_minute', '0') ?? '0')));
+
+        $todayTotalMinutes = 0;
+
+        if ($entryToday?->total_minutes !== null) {
+            $todayTotalMinutes = (int) $entryToday->total_minutes;
+        } elseif ($entryToday?->time_in) {
+            $todayTotalMinutes = (int) abs($entryToday->time_in->diffInMinutes(Carbon::now()));
+        }
+
+        return [
+            'enabled' => Setting::get('critical_alerts_enabled', '0') === '1',
+            'timezone' => $timezone,
+            'profile_name' => $profile->name,
+            'required_minutes' => $requiredMinutes,
+            'today_total_minutes' => max(0, $todayTotalMinutes),
+            'under_hours' => $todayTotalMinutes < $requiredMinutes,
+            'hour' => $hour,
+            'minute' => $minute,
+        ];
     }
 }

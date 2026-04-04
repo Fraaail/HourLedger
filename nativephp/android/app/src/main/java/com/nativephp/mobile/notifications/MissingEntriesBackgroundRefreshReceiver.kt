@@ -12,6 +12,7 @@ class MissingEntriesBackgroundRefreshReceiver : BroadcastReceiver() {
             Intent.ACTION_TIMEZONE_CHANGED,
             Intent.ACTION_TIME_CHANGED -> {
                 MissingEntriesReminderScheduler.refreshFromStorage(context)
+                UnderHoursCriticalAlertScheduler.refreshFromStorage(context)
             }
         }
     }

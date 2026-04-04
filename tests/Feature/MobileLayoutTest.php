@@ -199,3 +199,33 @@ test('android reminder scheduler supports persisted background refresh restore',
     expect($scheduler)->toContain('persistConfiguration');
     expect($scheduler)->toContain('hourledger_missing_entries_refresh');
 });
+
+test('android manifest includes under-hours alert receiver', function () {
+    $manifestPath = base_path('nativephp/android/app/src/main/AndroidManifest.xml');
+    expect(file_exists($manifestPath))->toBeTrue();
+
+    $manifest = file_get_contents($manifestPath);
+
+    expect($manifest)->toContain('UnderHoursCriticalAlertReceiver');
+});
+
+test('android under-hours scheduler supports persisted refresh restore', function () {
+    $schedulerPath = base_path('nativephp/android/app/src/main/java/com/nativephp/mobile/notifications/UnderHoursCriticalAlertScheduler.kt');
+    expect(file_exists($schedulerPath))->toBeTrue();
+
+    $scheduler = file_get_contents($schedulerPath);
+
+    expect($scheduler)->toContain('refreshFromStorage');
+    expect($scheduler)->toContain('hourledger_under_hours_alert_refresh');
+    expect($scheduler)->toContain('requiredMinutes');
+});
+
+test('android main activity exposes under-hours bridge sync method', function () {
+    $mainActivityPath = base_path('nativephp/android/app/src/main/java/com/nativephp/mobile/ui/MainActivity.kt');
+    expect(file_exists($mainActivityPath))->toBeTrue();
+
+    $mainActivity = file_get_contents($mainActivityPath);
+
+    expect($mainActivity)->toContain('fun syncCriticalUnderHoursAlert');
+    expect($mainActivity)->toContain('UnderHoursCriticalAlertScheduler.sync');
+});

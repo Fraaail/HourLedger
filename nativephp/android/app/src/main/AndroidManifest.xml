@@ -63,6 +63,11 @@
             android:exported="false" />
 
         <receiver
+            android:name=".notifications.UnderHoursCriticalAlertReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
             android:name=".notifications.MissingEntriesBackgroundRefreshReceiver"
             android:enabled="true"
             android:exported="true">

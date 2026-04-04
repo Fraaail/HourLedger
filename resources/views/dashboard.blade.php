@@ -98,6 +98,8 @@ const widgetPayload = {
     updated_at: @json(now()->toIso8601String())
 };
 
+const criticalUnderHoursPayload = @json($criticalUnderHoursPayload);
+
 function syncHomeWidget() {
     if (window.AndroidBridge && typeof window.AndroidBridge.syncHomeWidget === 'function') {
         window.AndroidBridge.syncHomeWidget(JSON.stringify(widgetPayload));
@@ -114,6 +116,12 @@ function syncMissingEntriesReminder() {
             minute: 0,
             skip_today: @json((bool) ($entryToday?->time_in)),
         }));
+    }
+}
+
+function syncCriticalUnderHoursAlert() {
+    if (window.AndroidBridge && typeof window.AndroidBridge.syncCriticalUnderHoursAlert === 'function') {
+        window.AndroidBridge.syncCriticalUnderHoursAlert(JSON.stringify(criticalUnderHoursPayload));
     }
 }
 
@@ -255,11 +263,13 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
         syncHomeWidget();
         syncMissingEntriesReminder();
+        syncCriticalUnderHoursAlert();
         registerPullToRefresh();
     });
 } else {
     syncHomeWidget();
     syncMissingEntriesReminder();
+    syncCriticalUnderHoursAlert();
     registerPullToRefresh();
 }
 

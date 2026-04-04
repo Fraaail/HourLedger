@@ -236,3 +236,83 @@ test('missing entries reminder update rejects invalid enabled value', function (
 
     $response->assertSessionHasErrors('enabled');
 });
+
+test('settings page shows under-hours alert controls', function () {
+    $response = $this->get('/settings');
+    $response->assertStatus(200);
+    $response->assertSee('End-of-Day Under-Hours Alerts', false);
+    $response->assertSee('critical_alerts_enabled', false);
+    $response->assertSee('critical_alert_required_hours', false);
+    $response->assertSee('critical_alert_time', false);
+});
+
+test('user can update under-hours alerts via ajax', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/settings/critical-alerts', [
+            'enabled' => true,
+            'required_minutes' => 420,
+            'hour' => 18,
+            'minute' => 15,
+        ]);
+
+    $response->assertStatus(200);
+    $response->assertJson([
+        'success' => true,
+        'message' => 'Under-hours alerts updated.',
+        'enabled' => true,
+    ]);
+    $response->assertJsonPath('payload.required_minutes', 420);
+    $response->assertJsonPath('payload.hour', 18);
+    $response->assertJsonPath('payload.minute', 15);
+    $response->assertJsonPath('payload.under_hours', true);
+
+    $this->assertDatabaseHas('settings', [
+        'profile_id' => ActiveProfile::id(),
+        'key' => 'critical_alerts_enabled',
+        'value' => '1',
+    ]);
+    $this->assertDatabaseHas('settings', [
+        'profile_id' => ActiveProfile::id(),
+        'key' => 'critical_alert_required_minutes',
+        'value' => '420',
+    ]);
+});
+
+test('under-hours payload marks target as met when enough minutes are logged', function () {
+    Carbon::setTestNow(Carbon::create(2026, 4, 3, 10, 0, 0, 'UTC'));
+    Setting::set('timezone', 'UTC');
+
+    TimeEntry::create([
+        'profile_id' => ActiveProfile::id(),
+        'date' => Carbon::now('UTC')->toDateString(),
+        'time_in' => Carbon::now()->subHours(9),
+        'time_out' => Carbon::now(),
+        'total_minutes' => 540,
+    ]);
+
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->postJson('/settings/critical-alerts', [
+            'enabled' => true,
+            'required_minutes' => 480,
+            'hour' => 18,
+            'minute' => 0,
+        ]);
+
+    $response->assertStatus(200);
+    $response->assertJsonPath('payload.today_total_minutes', 540);
+    $response->assertJsonPath('payload.under_hours', false);
+
+    Carbon::setTestNow();
+});
+
+test('under-hours alert update rejects invalid required minutes', function () {
+    $response = $this->withoutMiddleware(ValidateCsrfToken::class)
+        ->post('/settings/critical-alerts', [
+            'enabled' => true,
+            'required_minutes' => 30,
+            'hour' => 18,
+            'minute' => 0,
+        ]);
+
+    $response->assertSessionHasErrors('required_minutes');
+});
