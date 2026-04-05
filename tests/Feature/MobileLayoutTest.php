@@ -229,3 +229,33 @@ test('android main activity exposes under-hours bridge sync method', function ()
     expect($mainActivity)->toContain('fun syncCriticalUnderHoursAlert');
     expect($mainActivity)->toContain('UnderHoursCriticalAlertScheduler.sync');
 });
+
+test('ios entitlements include critical alerts capability', function () {
+    $entitlementsPath = base_path('nativephp/ios/NativePHP/NativePHP.entitlements');
+    expect(file_exists($entitlementsPath))->toBeTrue();
+
+    $entitlements = file_get_contents($entitlementsPath);
+
+    expect($entitlements)->toContain('com.apple.developer.usernotifications.critical-alerts');
+});
+
+test('ios content view exposes critical alert bridge handler', function () {
+    $contentViewPath = base_path('nativephp/ios/NativePHP/ContentView.swift');
+    expect(file_exists($contentViewPath))->toBeTrue();
+
+    $contentView = file_get_contents($contentViewPath);
+
+    expect($contentView)->toContain('syncCriticalUnderHoursAlert');
+    expect($contentView)->toContain('CriticalUnderHoursAlertBridgeHandler');
+});
+
+test('ios app delegate includes critical under-hours scheduler', function () {
+    $appDelegatePath = base_path('nativephp/ios/NativePHP/AppDelegate.swift');
+    expect(file_exists($appDelegatePath))->toBeTrue();
+
+    $appDelegate = file_get_contents($appDelegatePath);
+
+    expect($appDelegate)->toContain('CriticalUnderHoursAlertScheduler');
+    expect($appDelegate)->toContain('UNUserNotificationCenter');
+    expect($appDelegate)->toContain('defaultCriticalSound');
+});

@@ -316,3 +316,10 @@ test('under-hours alert update rejects invalid required minutes', function () {
 
     $response->assertSessionHasErrors('required_minutes');
 });
+
+test('settings critical alert sync supports iOS message handler fallback', function () {
+    $response = $this->get('/settings');
+
+    $response->assertStatus(200);
+    $response->assertSee('window.webkit.messageHandlers.syncCriticalUnderHoursAlert', false);
+});

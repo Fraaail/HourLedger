@@ -79,7 +79,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Implement Home Screen Widgets on Android (small and medium) with bridge-driven data sync from dashboard stats.
 - [x] Implement App Shortcuts / Quick Actions for Android on the app icon (iOS pending native target scaffolding).
 - [x] Implement weekday local missing-entry reminders with timezone-aware scheduling and per-profile toggle control.
-- [ ] Implement iOS Critical Alerts for end-of-day under-hours reminders (Android groundwork now added via under-hours scheduler/bridge sync/settings payload; final iOS critical delivery remains blocked until iOS native target scaffolding and entitlement setup are available).
+- [x] Implement iOS Critical Alerts for end-of-day under-hours reminders (added iOS native target scaffold, critical-alert entitlement, WKWebView bridge handler, and local under-hours scheduling path; production App Store rollout still depends on Apple critical-alert approval/codesigning on macOS).
 - [x] Implement Native Share Sheet integration with profile-scoped CSV export and mobile share/download fallback.
 - [x] Implement haptic feedback patterns for clock-in, clock-out, and destructive delete warning actions.
 - [x] Implement Dynamic Type support with scalable rem/clamp typography and fluid layout behavior for larger text settings.

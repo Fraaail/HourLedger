@@ -26,11 +26,11 @@ This document outlines recommended features and optimizations to enhance the Hou
     - **Benefit:** Improves data accuracy by reducing "forgotten" entries.
     - **Implementation:** Added Android local reminder scheduling through a native bridge (`syncMissingEntriesReminder`) with timezone-aware weekday alarms, a profile-scoped settings toggle, and runtime notification permission support. Current implementation re-schedules to the next weekday at 9:00 AM and updates schedule state from Dashboard/Settings interactions.
 
-- [ ] **Critical Alerts (iOS)**
+- [x] **Critical Alerts (iOS)**
     - **Recommendation:** Use iOS Critical Alerts for end-of-day reminders if hours are significantly under the requirement.
     - **Benefit:** Ensures the user notices important tracking deadlines even when the phone is on mute.
-    - **Implementation Progress:** Added under-hours alert configuration in Settings (enable toggle, target-hour threshold, reminder time), payload sync from Settings and Dashboard (`syncCriticalUnderHoursAlert`), Android high-priority local notification scheduling (`UnderHoursCriticalAlertScheduler` + receiver), and boot/time-change schedule restore via background refresh receiver.
-    - **Implementation Note:** iOS critical alerts remain blocked because this repository currently contains only the Android native target. Final iOS critical delivery still requires iOS project scaffolding, Apple entitlement approval, and APNs critical alert configuration.
+    - **Implementation:** Added iOS native target scaffold under `nativephp/ios`, enabled critical-alert entitlement (`com.apple.developer.usernotifications.critical-alerts`), wired WKWebView bridge syncing for `syncCriticalUnderHoursAlert`, and implemented `CriticalUnderHoursAlertScheduler` for timezone-aware weekday local scheduling with critical sound fallback behavior. Existing Settings/Dashboard payload sync now targets both Android and iOS paths.
+    - **Implementation Note:** Runtime signing/packaging and final production critical-alert delivery still require macOS/Xcode provisioning plus Apple critical-alert approval for the bundle ID.
 
 ## 3. Data Portability & Sharing
 

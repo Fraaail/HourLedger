@@ -236,8 +236,15 @@ function syncMissingEntriesReminder(payload) {
 }
 
 function syncCriticalUnderHoursAlert(payload) {
+    const payloadJson = JSON.stringify(payload);
+
     if (window.AndroidBridge && typeof window.AndroidBridge.syncCriticalUnderHoursAlert === 'function') {
-        window.AndroidBridge.syncCriticalUnderHoursAlert(JSON.stringify(payload));
+        window.AndroidBridge.syncCriticalUnderHoursAlert(payloadJson);
+        return;
+    }
+
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.syncCriticalUnderHoursAlert) {
+        window.webkit.messageHandlers.syncCriticalUnderHoursAlert.postMessage(payloadJson);
     }
 }
 

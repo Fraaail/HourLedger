@@ -37,6 +37,10 @@ android/app/src/main/java/com/nativephp/mobile/notifications/*
 !android/app/src/main/java/com/nativephp/mobile/widget/HomeWidgetStore.kt
 !android/app/src/main/java/com/nativephp/mobile/widget/HourLedgerWidgetProvider.kt
 
+!ios/
+!ios/**
+ios/Libraries/**
+
 !android/app/src/main/res/
 android/app/src/main/res/*
 !android/app/src/main/res/values/

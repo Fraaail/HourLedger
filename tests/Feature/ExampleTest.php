@@ -51,6 +51,7 @@ test('dashboard includes under-hours alert sync hooks', function () {
     $response->assertStatus(200);
     $response->assertSee('syncCriticalUnderHoursAlert', false);
     $response->assertSee('criticalUnderHoursPayload', false);
+    $response->assertSee('window.webkit.messageHandlers.syncCriticalUnderHoursAlert', false);
 });
 
 test('user can log time in', function () {

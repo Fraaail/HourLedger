@@ -1,0 +1,54 @@
+module PHP [system] {
+    umbrella "php/sapi"
+    link "php"
+    export *
+}
+
+module Bridge {
+    umbrella "Bridge"
+    export *
+}
+
+module OpenSSL [system] {
+    umbrella "openssl"
+    link "ssl"
+    link "crypto"
+    export *
+}
+
+module curl [system] {
+    umbrella "curl"
+    link "curl"
+    export *
+}
+
+module sqlite3 [system] {
+    umbrella "sqlite"
+    link "sqlite3"
+    export *
+}
+
+module XML [system] {
+    umbrella "libxml2"
+    link "xml2"
+    export *
+}
+
+module iconv [system] {
+    umbrella "iconv"
+    link "iconv"
+    link "charset"
+    export *
+}
+
+module png [system] {
+    umbrella "libpng16"
+    link "png16"
+    export *
+}
+
+module zip [system] {
+    umbrella "zip"
+    link "zip"
+    export *
+}

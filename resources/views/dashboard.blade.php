@@ -120,8 +120,15 @@ function syncMissingEntriesReminder() {
 }
 
 function syncCriticalUnderHoursAlert() {
+    const payloadJson = JSON.stringify(criticalUnderHoursPayload);
+
     if (window.AndroidBridge && typeof window.AndroidBridge.syncCriticalUnderHoursAlert === 'function') {
-        window.AndroidBridge.syncCriticalUnderHoursAlert(JSON.stringify(criticalUnderHoursPayload));
+        window.AndroidBridge.syncCriticalUnderHoursAlert(payloadJson);
+        return;
+    }
+
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.syncCriticalUnderHoursAlert) {
+        window.webkit.messageHandlers.syncCriticalUnderHoursAlert.postMessage(payloadJson);
     }
 }
 
