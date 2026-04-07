@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="clock_in"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:shortcutShortLabel="@string/shortcut_clock_in_short"
+        android:shortcutLongLabel="@string/shortcut_clock_in_long"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass=".ui.MainActivity"
+            android:data="nativephp://shortcut/clock-in" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="clock_out"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:shortcutShortLabel="@string/shortcut_clock_out_short"
+        android:shortcutLongLabel="@string/shortcut_clock_out_long"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass=".ui.MainActivity"
+            android:data="nativephp://shortcut/clock-out" />
+    </shortcut>
+</shortcuts>

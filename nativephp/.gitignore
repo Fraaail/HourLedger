@@ -57,3 +57,4 @@ android/app/src/main/res/drawable/*
 !android/app/src/main/res/xml/
 android/app/src/main/res/xml/*
 !android/app/src/main/res/xml/hourledger_widget_info.xml
+!android/app/src/main/res/xml/shortcuts.xml

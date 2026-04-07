@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">AndroidPHP</string>
+    <string name="shortcut_clock_in_short">Time In</string>
+    <string name="shortcut_clock_in_long">Create a Time In entry</string>
+    <string name="shortcut_clock_out_short">Time Out</string>
+    <string name="shortcut_clock_out_long">Create a Time Out entry</string>
+    <string name="shortcut_disabled">Shortcut disabled</string>
     <string name="widget_description">HourLedger quick summary widget</string>
     <string name="widget_total_hours_value">Hours: %1$s</string>
     <string name="widget_total_days_value">Days: %1$s</string>
