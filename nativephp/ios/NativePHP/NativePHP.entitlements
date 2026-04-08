@@ -10,5 +10,9 @@
     <array>
         <string>applinks:nativephp.com</string>
     </array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.nativephp.hourledger</string>
+	</array>
 </dict>
 </plist>

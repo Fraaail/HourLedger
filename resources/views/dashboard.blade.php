@@ -101,8 +101,15 @@ const widgetPayload = {
 const criticalUnderHoursPayload = @json($criticalUnderHoursPayload);
 
 function syncHomeWidget() {
+    const payloadJson = JSON.stringify(widgetPayload);
+
     if (window.AndroidBridge && typeof window.AndroidBridge.syncHomeWidget === 'function') {
-        window.AndroidBridge.syncHomeWidget(JSON.stringify(widgetPayload));
+        window.AndroidBridge.syncHomeWidget(payloadJson);
+        return;
+    }
+
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.syncHomeWidget) {
+        window.webkit.messageHandlers.syncHomeWidget.postMessage(payloadJson);
     }
 }
 

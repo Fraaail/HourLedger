@@ -172,6 +172,7 @@ struct WebView: UIViewRepresentable {
     class Coordinator: NSObject, WKNavigationDelegate {
         let logger = ConsoleLogger()
         let criticalUnderHoursBridgeHandler = CriticalUnderHoursAlertBridgeHandler()
+        let homeWidgetBridgeHandler = HomeWidgetBridgeHandler()
         var webView: WKWebView?
         var hasCompletedInitialLoad = false
 
@@ -535,6 +536,7 @@ struct WebView: UIViewRepresentable {
     func addNativeHelper(webView: WKWebView, context: Context) {
         let contentController = webView.configuration.userContentController
 
+        contentController.add(context.coordinator.homeWidgetBridgeHandler, name: "syncHomeWidget")
         contentController.add(context.coordinator.criticalUnderHoursBridgeHandler, name: "syncCriticalUnderHoursAlert")
 
         // Inject safe area CSS FIRST at document start to prevent layout jump
@@ -582,6 +584,18 @@ struct WebView: UIViewRepresentable {
             document.body.classList.add('nativephp-ios');
 
             window.AndroidBridge = window.AndroidBridge || {};
+            window.AndroidBridge.syncHomeWidget = function(payloadJson) {
+                if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.syncHomeWidget) {
+                    var normalizedPayload = payloadJson;
+
+                    if (typeof normalizedPayload !== 'string') {
+                        normalizedPayload = JSON.stringify(normalizedPayload || {});
+                    }
+
+                    window.webkit.messageHandlers.syncHomeWidget.postMessage(normalizedPayload);
+                }
+            };
+
             window.AndroidBridge.syncCriticalUnderHoursAlert = function(payloadJson) {
                 if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.syncCriticalUnderHoursAlert) {
                     var normalizedPayload = payloadJson;
@@ -624,6 +638,24 @@ class ConsoleLogger: NSObject, WKScriptMessageHandler {
             print()
             print("JS \(type): \(logMessage)")
         }
+    }
+}
+
+class HomeWidgetBridgeHandler: NSObject, WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if let payloadJson = message.body as? String {
+            HomeWidgetStore.shared.sync(fromPayloadJson: payloadJson)
+            return
+        }
+
+        if let payload = message.body as? [String: Any],
+           let payloadData = try? JSONSerialization.data(withJSONObject: payload, options: []),
+           let payloadJson = String(data: payloadData, encoding: .utf8) {
+            HomeWidgetStore.shared.sync(fromPayloadJson: payloadJson)
+            return
+        }
+
+        HomeWidgetStore.shared.clear()
     }
 }
 
