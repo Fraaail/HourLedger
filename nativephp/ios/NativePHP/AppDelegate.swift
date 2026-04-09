@@ -54,6 +54,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             DeepLinkRouter.shared.handle(url: url)
         }
 
+        // Check if the app was launched from a Home Screen Quick Action
+        if let shortcutItem = launchOptions?[UIApplication.LaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
+            DebugLogger.shared.log("📱 AppDelegate: Cold start with Quick Action: \(shortcutItem.type)")
+            _ = handleQuickAction(shortcutItem)
+        }
+
         return true
     }
 
@@ -107,6 +113,46 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Pass the URL to the DeepLinkRouter
         DeepLinkRouter.shared.handle(url: url)
         return true
+    }
+
+    func application(
+        _ application: UIApplication,
+        performActionFor shortcutItem: UIApplicationShortcutItem,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        completionHandler(handleQuickAction(shortcutItem))
+    }
+
+    private func handleQuickAction(_ shortcutItem: UIApplicationShortcutItem) -> Bool {
+        guard let route = shortcutRoute(for: shortcutItem) else {
+            return false
+        }
+
+        let normalizedRoute = route.hasPrefix("/") ? String(route.dropFirst()) : route
+
+        guard !normalizedRoute.isEmpty,
+              let url = URL(string: "nativephp://\(normalizedRoute)") else {
+            return false
+        }
+
+        DeepLinkRouter.shared.handle(url: url)
+
+        return true
+    }
+
+    private func shortcutRoute(for shortcutItem: UIApplicationShortcutItem) -> String? {
+        if let route = shortcutItem.userInfo?["route"] as? String, !route.isEmpty {
+            return route
+        }
+
+        switch shortcutItem.type {
+        case "com.nativephp.app.clock-in":
+            return "/shortcut/clock-in"
+        case "com.nativephp.app.clock-out":
+            return "/shortcut/clock-out"
+        default:
+            return nil
+        }
     }
 }
 

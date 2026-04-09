@@ -18,7 +18,7 @@ This document outlines recommended features and optimizations to enhance the Hou
 - [x] **App Shortcuts / Quick Actions**
     - **Recommendation:** Implement "Quick Actions" (iOS) and "App Shortcuts" (Android) on the app icon.
     - **Benefit:** Enables users to "Clock In" or "Clock Out" directly from the home screen with a long-press.
-    - **Implementation:** Android `shortcuts.xml` and Manifest meta-data added utilizing existing NativePHP deep link intent capture mechanisms. iOS Quick Actions implementation remains pending until iOS native target scaffolding is added.
+    - **Implementation:** Android `shortcuts.xml` and Manifest meta-data utilize existing NativePHP deep-link intent capture. iOS static quick actions are now defined in `Info.plist` (`com.nativephp.app.clock-in`, `com.nativephp.app.clock-out`) and handled in `AppDelegate` via DeepLinkRouter routing to `/shortcut/clock-in` and `/shortcut/clock-out`.
 
 ## 2. Notifications & Engagement
 

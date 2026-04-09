@@ -15,6 +15,39 @@
 			</array>
 		</dict>
 	</array>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypePlay</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Start today's session</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Clock In</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.nativephp.app.clock-in</string>
+			<key>UIApplicationShortcutItemUserInfo</key>
+			<dict>
+				<key>route</key>
+				<string>/shortcut/clock-in</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypePause</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Finish today's session</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Clock Out</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.nativephp.app.clock-out</string>
+			<key>UIApplicationShortcutItemUserInfo</key>
+			<dict>
+				<key>route</key>
+				<string>/shortcut/clock-out</string>
+			</dict>
+		</dict>
+	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoadsInWebContent</key>

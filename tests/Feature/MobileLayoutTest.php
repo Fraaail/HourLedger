@@ -259,3 +259,28 @@ test('ios app delegate includes critical under-hours scheduler', function () {
     expect($appDelegate)->toContain('UNUserNotificationCenter');
     expect($appDelegate)->toContain('defaultCriticalSound');
 });
+
+test('ios info plist includes static quick actions for clock in and clock out', function () {
+    $infoPlistPath = base_path('nativephp/ios/NativePHP/Info.plist');
+    expect(file_exists($infoPlistPath))->toBeTrue();
+
+    $infoPlist = file_get_contents($infoPlistPath);
+
+    expect($infoPlist)->toContain('UIApplicationShortcutItems');
+    expect($infoPlist)->toContain('com.nativephp.app.clock-in');
+    expect($infoPlist)->toContain('com.nativephp.app.clock-out');
+    expect($infoPlist)->toContain('/shortcut/clock-in');
+    expect($infoPlist)->toContain('/shortcut/clock-out');
+});
+
+test('ios app delegate handles quick actions through deep link router', function () {
+    $appDelegatePath = base_path('nativephp/ios/NativePHP/AppDelegate.swift');
+    expect(file_exists($appDelegatePath))->toBeTrue();
+
+    $appDelegate = file_get_contents($appDelegatePath);
+
+    expect($appDelegate)->toContain('performActionFor shortcutItem');
+    expect($appDelegate)->toContain('handleQuickAction');
+    expect($appDelegate)->toContain('shortcutRoute');
+    expect($appDelegate)->toContain('nativephp://');
+});

@@ -77,7 +77,7 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Link mobile recommendations to the main project documentation.
 - [x] Implement Biometric Authentication for profile access on Android and iOS using NativePHP's bridge.
 - [x] Implement Home Screen Widgets on Android (small and medium) and add iOS widget bridge + WidgetKit scaffold (`NativePHPWidgets`) with app-group storage sync.
-- [x] Implement App Shortcuts / Quick Actions for Android on the app icon (iOS pending native target scaffolding).
+- [x] Implement App Shortcuts / Quick Actions for Android and iOS on the app icon (iOS static quick actions now route to `/shortcut/clock-in` and `/shortcut/clock-out` through native deep-link handling).
 - [x] Implement weekday local missing-entry reminders with timezone-aware scheduling and per-profile toggle control.
 - [x] Implement iOS Critical Alerts for end-of-day under-hours reminders (added iOS native target scaffold, critical-alert entitlement, WKWebView bridge handler, and local under-hours scheduling path; production App Store rollout still depends on Apple critical-alert approval/codesigning on macOS).
 - [x] Implement Native Share Sheet integration with profile-scoped CSV export and mobile share/download fallback.
