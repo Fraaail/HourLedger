@@ -60,7 +60,27 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             _ = handleQuickAction(shortcutItem)
         }
 
+        application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+        _ = MissingEntriesReminderScheduler.shared.refreshFromStorage()
+
         return true
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        NotificationCenter.default.post(name: .didBecomeActive, object: nil)
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        NotificationCenter.default.post(name: .didEnterBackground, object: nil)
+    }
+
+    func application(
+        _ application: UIApplication,
+        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        let restoredMissingEntriesReminder = MissingEntriesReminderScheduler.shared.refreshFromStorage()
+
+        completionHandler(restoredMissingEntriesReminder ? .newData : .noData)
     }
 
     // Called for Universal Links
@@ -153,6 +173,244 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         default:
             return nil
         }
+    }
+}
+
+final class MissingEntriesReminderScheduler {
+    static let shared = MissingEntriesReminderScheduler()
+
+    private let notificationCenter = UNUserNotificationCenter.current()
+    private let notificationId = "hourledger_missing_entries_reminder"
+
+    private let prefTimezone = "hourledger_missing_entries_refresh.timezone"
+    private let prefProfileName = "hourledger_missing_entries_refresh.profile_name"
+    private let prefHour = "hourledger_missing_entries_refresh.hour"
+    private let prefMinute = "hourledger_missing_entries_refresh.minute"
+    private let prefSkipToday = "hourledger_missing_entries_refresh.skip_today"
+
+    private init() {}
+
+    func sync(fromPayloadJson payloadJson: String?) {
+        guard let payloadJson = payloadJson, !payloadJson.isEmpty else {
+            cancel()
+            return
+        }
+
+        guard
+            let payloadData = payloadJson.data(using: .utf8),
+            let payload = try? JSONSerialization.jsonObject(with: payloadData) as? [String: Any]
+        else {
+            cancel()
+            return
+        }
+
+        sync(from: payload)
+    }
+
+    func sync(from payload: [String: Any]) {
+        let enabled = boolValue(payload["enabled"], defaultValue: true)
+
+        if !enabled {
+            cancel()
+            return
+        }
+
+        let profileName = stringValue(payload["profile_name"], defaultValue: "HourLedger")
+        let timezoneId = stringValue(payload["timezone"], defaultValue: TimeZone.current.identifier)
+        let timezone = TimeZone(identifier: timezoneId) ?? .current
+        let hour = intValue(payload["hour"], defaultValue: 9).clamped(to: 0...23)
+        let minute = intValue(payload["minute"], defaultValue: 0).clamped(to: 0...59)
+        let skipToday = boolValue(payload["skip_today"], defaultValue: false)
+
+        persistConfiguration(
+            timezone: timezone.identifier,
+            profileName: profileName,
+            hour: hour,
+            minute: minute,
+            skipToday: skipToday
+        )
+
+        requestAuthorizationAndSchedule(
+            profileName: profileName,
+            timezone: timezone,
+            hour: hour,
+            minute: minute,
+            skipToday: skipToday
+        )
+    }
+
+    func refreshFromStorage() -> Bool {
+        let defaults = UserDefaults.standard
+
+        guard
+            let timezone = defaults.string(forKey: prefTimezone),
+            let profileName = defaults.string(forKey: prefProfileName)
+        else {
+            return false
+        }
+
+        let hour = defaults.integer(forKey: prefHour).clamped(to: 0...23)
+        let minute = defaults.integer(forKey: prefMinute).clamped(to: 0...59)
+        let skipToday = defaults.bool(forKey: prefSkipToday)
+
+        sync(from: [
+            "enabled": true,
+            "timezone": timezone,
+            "profile_name": profileName,
+            "hour": hour,
+            "minute": minute,
+            "skip_today": skipToday,
+        ])
+
+        return true
+    }
+
+    func cancel() {
+        clearConfiguration()
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: [notificationId])
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: [notificationId])
+    }
+
+    private func requestAuthorizationAndSchedule(
+        profileName: String,
+        timezone: TimeZone,
+        hour: Int,
+        minute: Int,
+        skipToday: Bool
+    ) {
+        notificationCenter.getNotificationSettings { [weak self] settings in
+            guard let self else {
+                return
+            }
+
+            switch settings.authorizationStatus {
+            case .authorized, .provisional:
+                self.scheduleLocalNotification(
+                    profileName: profileName,
+                    timezone: timezone,
+                    hour: hour,
+                    minute: minute,
+                    skipToday: skipToday
+                )
+            case .notDetermined:
+                self.notificationCenter.requestAuthorization(options: [.alert, .badge, .sound]) { granted, _ in
+                    guard granted else {
+                        return
+                    }
+
+                    self.scheduleLocalNotification(
+                        profileName: profileName,
+                        timezone: timezone,
+                        hour: hour,
+                        minute: minute,
+                        skipToday: skipToday
+                    )
+                }
+            default:
+                return
+            }
+        }
+    }
+
+    private func scheduleLocalNotification(
+        profileName: String,
+        timezone: TimeZone,
+        hour: Int,
+        minute: Int,
+        skipToday: Bool
+    ) {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timezone
+
+        let now = Date()
+        var baseComponents = calendar.dateComponents([.year, .month, .day], from: now)
+        baseComponents.hour = hour
+        baseComponents.minute = minute
+        baseComponents.second = 0
+
+        var targetDate = calendar.date(from: baseComponents) ?? now
+
+        if skipToday || targetDate <= now {
+            targetDate = calendar.date(byAdding: .day, value: 1, to: targetDate) ?? targetDate
+        }
+
+        while calendar.isDateInWeekend(targetDate) {
+            targetDate = calendar.date(byAdding: .day, value: 1, to: targetDate) ?? targetDate
+        }
+
+        var triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: targetDate)
+        triggerComponents.timeZone = timezone
+
+        let content = UNMutableNotificationContent()
+        content.title = "Missing Clock-In Reminder"
+        content.body = "\(profileName) has no clock-in entry yet. Open HourLedger to record today's start time."
+        content.sound = .default
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+        let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: trigger)
+
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: [notificationId])
+        notificationCenter.add(request, withCompletionHandler: nil)
+    }
+
+    private func persistConfiguration(
+        timezone: String,
+        profileName: String,
+        hour: Int,
+        minute: Int,
+        skipToday: Bool
+    ) {
+        let defaults = UserDefaults.standard
+
+        defaults.set(timezone, forKey: prefTimezone)
+        defaults.set(profileName, forKey: prefProfileName)
+        defaults.set(hour.clamped(to: 0...23), forKey: prefHour)
+        defaults.set(minute.clamped(to: 0...59), forKey: prefMinute)
+        defaults.set(skipToday, forKey: prefSkipToday)
+    }
+
+    private func clearConfiguration() {
+        let defaults = UserDefaults.standard
+
+        defaults.removeObject(forKey: prefTimezone)
+        defaults.removeObject(forKey: prefProfileName)
+        defaults.removeObject(forKey: prefHour)
+        defaults.removeObject(forKey: prefMinute)
+        defaults.removeObject(forKey: prefSkipToday)
+    }
+
+    private func boolValue(_ value: Any?, defaultValue: Bool) -> Bool {
+        switch value {
+        case let bool as Bool:
+            return bool
+        case let number as NSNumber:
+            return number.boolValue
+        case let string as String:
+            return ["1", "true", "yes", "on"].contains(string.lowercased())
+        default:
+            return defaultValue
+        }
+    }
+
+    private func intValue(_ value: Any?, defaultValue: Int) -> Int {
+        switch value {
+        case let int as Int:
+            return int
+        case let number as NSNumber:
+            return number.intValue
+        case let string as String:
+            return Int(string) ?? defaultValue
+        default:
+            return defaultValue
+        }
+    }
+
+    private func stringValue(_ value: Any?, defaultValue: String) -> String {
+        if let string = value as? String, !string.isEmpty {
+            return string
+        }
+
+        return defaultValue
     }
 }
 

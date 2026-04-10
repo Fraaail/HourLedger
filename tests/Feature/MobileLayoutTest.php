@@ -249,6 +249,16 @@ test('ios content view exposes critical alert bridge handler', function () {
     expect($contentView)->toContain('CriticalUnderHoursAlertBridgeHandler');
 });
 
+test('ios content view exposes missing entries reminder bridge handler', function () {
+    $contentViewPath = base_path('nativephp/ios/NativePHP/ContentView.swift');
+    expect(file_exists($contentViewPath))->toBeTrue();
+
+    $contentView = file_get_contents($contentViewPath);
+
+    expect($contentView)->toContain('syncMissingEntriesReminder');
+    expect($contentView)->toContain('MissingEntriesReminderBridgeHandler');
+});
+
 test('ios app delegate includes critical under-hours scheduler', function () {
     $appDelegatePath = base_path('nativephp/ios/NativePHP/AppDelegate.swift');
     expect(file_exists($appDelegatePath))->toBeTrue();
@@ -258,6 +268,28 @@ test('ios app delegate includes critical under-hours scheduler', function () {
     expect($appDelegate)->toContain('CriticalUnderHoursAlertScheduler');
     expect($appDelegate)->toContain('UNUserNotificationCenter');
     expect($appDelegate)->toContain('defaultCriticalSound');
+});
+
+test('ios app delegate configures background fetch reminder restore', function () {
+    $appDelegatePath = base_path('nativephp/ios/NativePHP/AppDelegate.swift');
+    expect(file_exists($appDelegatePath))->toBeTrue();
+
+    $appDelegate = file_get_contents($appDelegatePath);
+
+    expect($appDelegate)->toContain('MissingEntriesReminderScheduler');
+    expect($appDelegate)->toContain('setMinimumBackgroundFetchInterval');
+    expect($appDelegate)->toContain('performFetchWithCompletionHandler');
+    expect($appDelegate)->toContain('refreshFromStorage');
+});
+
+test('ios info plist enables fetch background mode', function () {
+    $infoPlistPath = base_path('nativephp/ios/NativePHP/Info.plist');
+    expect(file_exists($infoPlistPath))->toBeTrue();
+
+    $infoPlist = file_get_contents($infoPlistPath);
+
+    expect($infoPlist)->toContain('UIBackgroundModes');
+    expect($infoPlist)->toContain('<string>fetch</string>');
 });
 
 test('ios info plist includes static quick actions for clock in and clock out', function () {

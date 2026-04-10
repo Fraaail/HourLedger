@@ -86,4 +86,4 @@ Based on the [Project Overview](project_overview.md), the following tasks need t
 - [x] Implement Android back gesture handling so visible overlays/modals dismiss before app exit/navigation.
 - [x] Implement custom iOS pull-to-refresh interaction on Dashboard with release threshold and visual refresh indicator.
 - [x] Implement image optimization with responsive WebP assets and fallback rendering for logo branding.
-- [x] Implement background refresh resilience for reminders on Android (boot/time-change restore), with iOS pending native scaffolding.
+- [x] Implement background refresh resilience for reminders on Android (boot/time-change restore) and iOS (background fetch restore via stored reminder payload sync).

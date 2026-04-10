@@ -25,7 +25,7 @@ This document outlines recommended features and optimizations to enhance the Hou
 - [x] **Push Notifications for Missing Entries**
     - **Recommendation:** Implement local notifications to alert users if they haven't clocked in by a certain time on weekdays.
     - **Benefit:** Improves data accuracy by reducing "forgotten" entries.
-    - **Implementation:** Added Android local reminder scheduling through a native bridge (`syncMissingEntriesReminder`) with timezone-aware weekday alarms, a profile-scoped settings toggle, and runtime notification permission support. Current implementation re-schedules to the next weekday at 9:00 AM and updates schedule state from Dashboard/Settings interactions.
+    - **Implementation:** Added Android local reminder scheduling through a native bridge (`syncMissingEntriesReminder`) with timezone-aware weekday alarms, a profile-scoped settings toggle, and runtime notification permission support. Added iOS bridge parity (`syncMissingEntriesReminder`) with `MissingEntriesReminderScheduler` local scheduling, persisted reminder payload restore, and background-fetch re-sync support.
 
 - [x] **Critical Alerts (iOS)**
     - **Recommendation:** Use iOS Critical Alerts for end-of-day reminders if hours are significantly under the requirement.
@@ -72,4 +72,4 @@ This document outlines recommended features and optimizations to enhance the Hou
 - [x] **Background Refresh (Background App Refresh)**
     - **Recommendation:** Enable background fetch to calculate missing entries even when the app isn't active.
     - **Benefit:** Keeps notifications accurate without requiring the user to open the app daily.
-    - **Implementation:** Added Android background refresh resilience for reminder scheduling by persisting reminder configuration and restoring alarms after boot, app updates, timezone changes, and manual time changes via `MissingEntriesBackgroundRefreshReceiver` + `MissingEntriesReminderScheduler.refreshFromStorage()`. iOS background refresh remains pending until iOS native target scaffolding is added.
+    - **Implementation:** Added Android background refresh resilience for reminder scheduling by persisting reminder configuration and restoring alarms after boot, app updates, timezone changes, and manual time changes via `MissingEntriesBackgroundRefreshReceiver` + `MissingEntriesReminderScheduler.refreshFromStorage()`. Added iOS Background App Refresh wiring (`UIBackgroundModes: fetch`, `performFetchWithCompletionHandler`) to re-apply stored reminder schedules through `MissingEntriesReminderScheduler.refreshFromStorage()`.

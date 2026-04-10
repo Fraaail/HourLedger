@@ -171,6 +171,7 @@ struct WebView: UIViewRepresentable {
 
     class Coordinator: NSObject, WKNavigationDelegate {
         let logger = ConsoleLogger()
+        let missingEntriesReminderBridgeHandler = MissingEntriesReminderBridgeHandler()
         let criticalUnderHoursBridgeHandler = CriticalUnderHoursAlertBridgeHandler()
         let homeWidgetBridgeHandler = HomeWidgetBridgeHandler()
         var webView: WKWebView?
@@ -537,6 +538,7 @@ struct WebView: UIViewRepresentable {
         let contentController = webView.configuration.userContentController
 
         contentController.add(context.coordinator.homeWidgetBridgeHandler, name: "syncHomeWidget")
+        contentController.add(context.coordinator.missingEntriesReminderBridgeHandler, name: "syncMissingEntriesReminder")
         contentController.add(context.coordinator.criticalUnderHoursBridgeHandler, name: "syncCriticalUnderHoursAlert")
 
         // Inject safe area CSS FIRST at document start to prevent layout jump
@@ -593,6 +595,18 @@ struct WebView: UIViewRepresentable {
                     }
 
                     window.webkit.messageHandlers.syncHomeWidget.postMessage(normalizedPayload);
+                }
+            };
+
+            window.AndroidBridge.syncMissingEntriesReminder = function(payloadJson) {
+                if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.syncMissingEntriesReminder) {
+                    var normalizedPayload = payloadJson;
+
+                    if (typeof normalizedPayload !== 'string') {
+                        normalizedPayload = JSON.stringify(normalizedPayload || {});
+                    }
+
+                    window.webkit.messageHandlers.syncMissingEntriesReminder.postMessage(normalizedPayload);
                 }
             };
 
@@ -656,6 +670,24 @@ class HomeWidgetBridgeHandler: NSObject, WKScriptMessageHandler {
         }
 
         HomeWidgetStore.shared.clear()
+    }
+}
+
+class MissingEntriesReminderBridgeHandler: NSObject, WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if let payloadJson = message.body as? String {
+            MissingEntriesReminderScheduler.shared.sync(fromPayloadJson: payloadJson)
+            return
+        }
+
+        if let payload = message.body as? [String: Any],
+           let payloadData = try? JSONSerialization.data(withJSONObject: payload, options: []),
+           let payloadJson = String(data: payloadData, encoding: .utf8) {
+            MissingEntriesReminderScheduler.shared.sync(fromPayloadJson: payloadJson)
+            return
+        }
+
+        MissingEntriesReminderScheduler.shared.cancel()
     }
 }
 

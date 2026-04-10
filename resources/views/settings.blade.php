@@ -132,8 +132,8 @@
         </div>
 
         <p class="settings-description" style="margin-top: 0.75rem;">
-            iOS Critical Alert delivery remains pending iOS native target scaffolding and Apple entitlement approval.
-            Current sync flow applies Android fallback scheduling and keeps payload support ready for future iOS wiring.
+            iOS Critical Alert local scheduling is active through the native bridge.
+            Production App Store rollout still requires Apple critical-alert entitlement approval and final code-signing setup.
         </p>
     </form>
 </div>
